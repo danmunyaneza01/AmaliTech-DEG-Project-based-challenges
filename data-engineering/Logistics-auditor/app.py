@@ -317,9 +317,29 @@ def brand_logo() -> str:
     return "data:image/png;base64," + base64.b64encode(raw).decode("ascii")
 
 
+def toggle_nav() -> None:
+    st.session_state.nav_open = not st.session_state.nav_open
+
+
 def render_nav() -> None:
+    st.session_state.setdefault("nav_open", True)
+    if not st.session_state.nav_open:
+        st.button(
+            "Menu",
+            key="nav_show",
+            icon=":material/left_panel_open:",
+            on_click=toggle_nav,
+        )
+        return
     sections = (("overview", "Overview"), ("dashboard", "Dashboard"), ("predict", "Prediction"))
     with st.sidebar:
+        st.button(
+            "Hide",
+            key="nav_hide",
+            icon=":material/left_panel_close:",
+            on_click=toggle_nav,
+            width="content",
+        )
         st.markdown(
             f'<img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">',
             unsafe_allow_html=True,
@@ -417,7 +437,7 @@ def render_flow() -> None:
     with st.container(key="page_foot"):
         st.markdown(
             """
-            <footer class="page-foot">
+            <section class="page-foot">
               <h2><i class="mark route"></i>From raw CSV to the answer</h2>
               <p class="foot-lead">The files start separate. They are cleaned, joined to one row per order, and compared with the promised day. That comparison is the insight on this page.</p>
               <div class="flow">
@@ -463,7 +483,7 @@ def render_flow() -> None:
               </div>
               <h3 class="foot-download-title"><i class="mark file"></i>Download the data this audit uses</h3>
               <p class="foot-lead">Analysis tables are the six summaries on this page. The source archive is the raw Olist CSV set they were built from: orders, customers, reviews, items, products, payments, locations, and category names.</p>
-            </footer>
+            </section>
             """,
             unsafe_allow_html=True,
         )

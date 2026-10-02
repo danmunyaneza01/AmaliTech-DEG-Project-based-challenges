@@ -79,8 +79,14 @@ body,
 
 .stApp,
 [data-testid="stAppViewContainer"] {
-  overflow-x: hidden;
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+[data-testid="stMain"],
+.stMain {
+  height: 100dvh;
+  overflow: auto;
 }
 
 header[data-testid="stHeader"],
@@ -131,6 +137,7 @@ section[data-testid="stSidebar"] {
   background: var(--secondary-1000) !important;
   width: var(--side-w) !important;
   min-width: var(--side-w) !important;
+  height: 100dvh !important;
   border-right: none !important;
 }
 
@@ -154,7 +161,7 @@ section[data-testid="stSidebar"] > div,
   display: block;
   height: 36px;
   width: auto;
-  margin: 8px auto 28px;
+  margin: 8px auto 48px;
 }
 
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
@@ -214,7 +221,9 @@ section[data-testid="stSidebar"] > div,
   gap: 8px;
 }
 
-[data-testid="stSidebar"] button p::before {
+.st-key-nav_overview button p::before,
+.st-key-nav_dashboard button p::before,
+.st-key-nav_predict button p::before {
   content: "";
   width: 14px;
   height: 14px;
@@ -223,6 +232,11 @@ section[data-testid="stSidebar"] > div,
   mask: var(--glyph) center / contain no-repeat;
 }
 
+.st-key-nav_show button {
+  width: fit-content !important;
+  min-height: 36px;
+  border-radius: 8px !important;
+}
 .st-key-nav_overview button p { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M4 19h16'/><path d='M7 16V10'/><path d='M12 16V6'/><path d='M17 16v-4'/></svg>"); }
 .st-key-nav_dashboard button p { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v6l4 2'/></svg>"); }
 .st-key-nav_predict button p { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 16l5-5 4 4 7-8'/><path d='M14 7h6v6'/></svg>"); }
@@ -432,16 +446,13 @@ div[data-testid="stSelectbox"] label {
 
 [data-testid="stVerticalBlock"].st-key-page_foot {
   position: relative;
-  background: var(--secondary-1000) !important;
-  width: calc(100vw - var(--side-w)) !important;
-  max-width: calc(100vw - var(--side-w)) !important;
-  margin-top: 48px !important;
-  margin-bottom: 0 !important;
-  margin-left: calc(50% - 50vw + var(--side-w)) !important;
-  margin-right: calc(50% - 50vw + var(--side-w)) !important;
-  padding: 42px max(40px, calc((100vw - var(--side-w) - 1140px) / 2)) 36px !important;
-  box-sizing: border-box;
-  color: #f4f7fb;
+  background: transparent !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 28px 0 0 !important;
+  padding: 8px 0 0 !important;
+  color: var(--tx);
+  border-top: 1px solid var(--bd);
 }
 
 [data-testid="stVerticalBlock"].st-key-page_foot [data-testid="stElementContainer"],
@@ -474,7 +485,7 @@ div[data-testid="stSelectbox"] label {
   font-family: var(--fontFamilyPoppins);
   font-size: 18px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--secondary-1000);
 }
 
 .foot-download-title {
@@ -495,7 +506,7 @@ div[data-testid="stSelectbox"] label {
   text-align: center;
   font-size: 14px;
   line-height: 1.5;
-  color: #d7e2ee;
+  color: var(--mu);
 }
 
 .foot-download-title + .foot-lead {
@@ -517,7 +528,7 @@ div[data-testid="stSelectbox"] label {
   left: 10%;
   right: 10%;
   height: 3px;
-  background: rgba(255, 188, 109, 0.55);
+  background: var(--primary-200);
 }
 
 .flow-step {
@@ -545,14 +556,14 @@ div[data-testid="stSelectbox"] label {
   font-family: var(--fontFamilyPoppins);
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--secondary-1000);
 }
 
 .flow-step > p {
   margin: 0;
   font-size: 12px;
   line-height: 1.45;
-  color: #d7e2ee;
+  color: var(--mu);
 }
 
 .foot-grid {
@@ -570,14 +581,14 @@ div[data-testid="stSelectbox"] label {
   margin: 0 0 6px;
   font-family: var(--fontFamilyPoppins);
   font-size: 14px;
-  color: #ffffff;
+  color: var(--secondary-1000);
 }
 
 .foot-grid p {
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
-  color: #d7e2ee;
+  color: var(--mu);
 }
 
 .st-key-page_foot [data-testid="stDownloadButton"] button {
@@ -1113,10 +1124,10 @@ div[data-testid="stSelectbox"] label {
 }
 
 .st-key-page_foot .foot {
-  color: #d7e2ee;
+  color: var(--mu);
   margin: 18px 0 0;
   padding: 14px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 1px solid var(--bd);
 }
 
 div[data-testid="stVerticalBlockBorderWrapper"] {
