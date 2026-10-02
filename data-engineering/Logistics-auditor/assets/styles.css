@@ -61,7 +61,7 @@
   --accent: var(--primary);
   --warn: var(--primary-400);
   --orange: var(--primary);
-  --side-w: 220px;
+  --side-w: 268px;
   --nav-bar-h: 72px;
   --tab-row-h: 42px;
 }
@@ -195,7 +195,7 @@ section[data-testid="stSidebar"] > div,
   border: none !important;
   border-radius: 8px !important;
   box-shadow: none !important;
-  white-space: normal;
+  white-space: nowrap;
 }
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] p,
@@ -205,6 +205,7 @@ section[data-testid="stSidebar"] > div,
   font-weight: 600;
   line-height: 1;
   color: inherit !important;
+  white-space: nowrap;
 }
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
