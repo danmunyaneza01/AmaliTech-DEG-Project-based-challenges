@@ -324,14 +324,13 @@ def render_nav() -> None:
             f'<img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">',
             unsafe_allow_html=True,
         )
-        st.markdown('<p class="side-label">Audit</p>', unsafe_allow_html=True)
         for key, label in sections:
             active = st.session_state.section == key
             st.button(
                 label,
                 key=f"nav_{key}",
                 type="primary" if active else "secondary",
-                width="stretch",
+                width="content",
                 on_click=choose_section,
                 args=(key,),
             )
