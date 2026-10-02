@@ -165,6 +165,12 @@ div:has(> .st-key-section_nav) {
   gap: 12px;
 }
 
+.brand-logo {
+  display: block;
+  height: 52px;
+  width: auto;
+}
+
 .bar-title small {
   display: block;
   margin-top: 4px;

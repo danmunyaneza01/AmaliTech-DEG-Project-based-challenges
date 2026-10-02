@@ -4,6 +4,7 @@ Audit overview and Dashboard share one stylesheet, assets/styles.css.
 From this folder: streamlit run app.py
 """
 
+import base64
 import io
 import math
 import zipfile
@@ -306,13 +307,18 @@ def hint(short: str, deep: str) -> None:
     )
 
 
+def brand_logo() -> str:
+    raw = (ROOT / "assets" / "veridi-logo.png").read_bytes()
+    return "data:image/png;base64," + base64.b64encode(raw).decode("ascii")
+
+
 def render_nav() -> None:
     st.markdown(
-        """
+        f"""
         <header class="site-header">
           <div class="brand-bar">
             <div class="bar-title">
-              <strong>Veridi Logistics</strong>
+              <img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">
             </div>
           </div>
         </header>
