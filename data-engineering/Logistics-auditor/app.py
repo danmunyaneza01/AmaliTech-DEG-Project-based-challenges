@@ -55,7 +55,12 @@ PAYMENT_LABELS = {
     "debit_card": "Debit card",
 }
 
-st.set_page_config(page_title="Logistics Auditor", page_icon="L", layout="wide")
+st.set_page_config(
+    page_title="Logistics Auditor",
+    page_icon="L",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 
 @st.cache_data
@@ -313,24 +318,16 @@ def brand_logo() -> str:
 
 
 def render_nav() -> None:
-    st.markdown(
-        f"""
-        <header class="site-header">
-          <div class="brand-bar">
-            <div class="bar-title">
-              <img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">
-            </div>
-          </div>
-        </header>
-        """,
-        unsafe_allow_html=True,
-    )
     sections = (("overview", "Overview"), ("dashboard", "Dashboard"), ("predict", "Prediction"))
-    with st.container(key="section_nav"):
-        cols = st.columns(3, gap="small")
-        for col, (key, label) in zip(cols, sections):
+    with st.sidebar:
+        st.markdown(
+            f'<img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">',
+            unsafe_allow_html=True,
+        )
+        st.markdown('<p class="side-label">Audit</p>', unsafe_allow_html=True)
+        for key, label in sections:
             active = st.session_state.section == key
-            col.button(
+            st.button(
                 label,
                 key=f"nav_{key}",
                 type="primary" if active else "secondary",
