@@ -5,6 +5,24 @@
 
 ---
 
+## A. The Executive Summary
+
+Of 96,470 delivered orders, 6.8% missed the promised date and 3.9% were more than five days late. The median order still arrived 12 days early, so the failure is a slow tail, not the typical shipment. That tail is regional: the Northeast late rate is 12.7% against 6.1% in the Southeast, with Alagoas at 21.4% and Rio de Janeiro at 12.1% on 12,350 orders, while São Paulo is 4.5% on 40,494. Review scores track the miss directly: 4.29 on time, 2.99 when one to five days late, and 1.74 when super late. The Northeast was promised 31 days for a trip that takes 20, leaving the same 11-day cushion as the Southeast, where the trip takes 11 days. The North, given a 16-day cushion, misses less often (8.6%) despite a longer road, so the date shown to the customer is the lever.
+
+## B. Project Links
+
+- **Link to Notebook:** [logistics_auditor.ipynb](https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/logistics_auditor.ipynb). The repo is public. Charts are also in the [HTML export](https://htmlpreview.github.io/?https://raw.githubusercontent.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/main/data-engineering/Logistics-auditor/logistics_auditor.html).
+- **Link to Dashboard:** Not published yet. The app is `app.py` in this folder (`streamlit run app.py`). A public Streamlit Cloud link still needs a signed-in deploy.
+- **Link to Presentation:** [veridi_delivery_audit.pdf](https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf). No video.
+
+## C. Technical Explanation
+
+**Data cleaning.** Orders, customers, and reviews are joined into one row per order. Reviews are not one-to-one: 547 orders had more than one review, so those rows were collapsed to a single `order_id` (mean score) before the join. Customers join on `customer_id` with a one-to-one check. The master table stays 99,441 rows, the same length as the orders table. `Days_Difference` is the promised calendar date minus the actual delivery calendar date. Orders that are canceled, unavailable, or missing a delivery date (2,971) are flagged **Not Delivered** and kept out of the late-rate denominator. Product categories stay on a separate item table, because one order can contain several products. Each order is labeled with the English category of its highest-priced item, using `product_category_name_translation.csv`. Category rates use categories with at least 200 delivered orders. Paths are relative (`data/` and `outputs/` next to the notebook).
+
+**Candidate's choice.** Late rate by state says where the promise was missed. It does not say whether the carrier was slow or the estimated date was too short. For each region the notebook compares promised lead time (purchase to estimated delivery) with actual lead time (purchase to delivery). The Northeast's longer promise only matched its longer trip, so the safety margin stayed about 11 days, the same as the Southeast, while the miss rate doubled. That is the feature a logistics manager can act on: widen the ETA for the Northeast and for Rio de Janeiro, where a broken date is what pulls the review score down.
+
+---
+
 ## 1. Business Context
 
 **Veridi Logistics** manages shipping for thousands of online sellers. Recently, the CEO has noticed a spike in negative customer reviews. She has a "gut feeling" that the problem isn't just that packages are late, but that the estimated delivery dates provided to customers are wildly inaccurate (i.e., we are over-promising and under-delivering).
@@ -143,22 +161,22 @@ Please edit this `README.md` file in your forked repository to include the follo
 
 ### 1. Repository & Code Checks
 
-- [ ] **My GitHub Repo is Public.** (Open the link in a Private/Incognito window to verify).
-- [ ] **I have uploaded the `.ipynb` notebook file.**
-- [ ] **I have ALSO uploaded an HTML or PDF export** of the notebook.
-- [ ] **I have NOT uploaded the massive raw dataset.** (Use `.gitignore` or just don't commit the CSV).
-- [ ] **My code uses Relative Paths.**
+- [x] **My GitHub Repo is Public.** (Open the link in a Private/Incognito window to verify).
+- [x] **I have uploaded the `.ipynb` notebook file.**
+- [x] **I have ALSO uploaded an HTML or PDF export** of the notebook.
+- [x] **I have NOT uploaded the massive raw dataset.** (Use `.gitignore` or just don't commit the CSV).
+- [x] **My code uses Relative Paths.**
 
 ### 2. Deliverable Checks
 
 - [ ] **My Dashboard link is publicly accessible.** (No login required).
-- [ ] **My Presentation link is publicly accessible.** (Permissions set to "Anyone with the link can view").
-- [ ] **I have updated this `README.md` file** with my Executive Summary and technical notes.
+- [x] **My Presentation link is publicly accessible.** (Permissions set to "Anyone with the link can view").
+- [x] **I have updated this `README.md` file** with my Executive Summary and technical notes.
 
 ### 3. Completeness
 
-- [ ] I have completed **User Stories 1-4**.
-- [ ] I have completed the **"Candidate's Choice"** challenge and explained it in the README.
+- [x] I have completed **User Stories 1-4**.
+- [x] I have completed the **"Candidate's Choice"** challenge and explained it in the README.
 
 **✅ Only when you have checked every box above, proceed to the submission form.**
 
