@@ -11,9 +11,23 @@ Of 96,470 delivered orders, 6.8% missed the promised date and 3.9% were more tha
 
 ## B. Project Links
 
-- **Link to Notebook:** [logistics_auditor.ipynb](https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/logistics_auditor.ipynb). The repo is public. Charts are also in the [HTML export](https://htmlpreview.github.io/?https://raw.githubusercontent.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/main/data-engineering/Logistics-auditor/logistics_auditor.html).
-- **Link to Dashboard:** [Veridi delivery audit](https://amalitech-deg-project-based-challenges-3xxwauhctlmcjg4iithlir.streamlit.app/). The app is `app.py` in this folder. Overview reads the committed summary tables. Dashboard and Prediction need the raw Olist CSVs, which stay out of the repo.
-- **Link to Presentation:** [veridi_delivery_audit.pdf](https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf). No video.
+**Notebook**
+
+https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/logistics_auditor.ipynb
+
+**Notebook HTML export**
+
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/main/data-engineering/Logistics-auditor/logistics_auditor.html
+
+**Dashboard**
+
+https://amalitech-deg-project-based-challenges-3xxwauhctlmcjg4iithlir.streamlit.app/
+
+**Presentation**
+
+https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf
+
+No video. The repository is public. Overview on the dashboard uses the summary tables in this folder. Dashboard and Prediction read the raw Olist files, which are not committed.
 
 ## C. Technical Explanation
 
