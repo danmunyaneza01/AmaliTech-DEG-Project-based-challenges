@@ -1435,14 +1435,14 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
             else:
                 star_color = {1: DANGER, 2: ORANGE, 3: WARN, 4: OK, 5: OK}
                 fig = go.Figure(go.Bar(
-                    x=[f"{int(score)}★" for score in dist["score"]],
+                    x=[str(int(score)) for score in dist["score"]],
                     y=dist["reviews"],
                     marker_color=[star_color.get(int(score), MUTED) for score in dist["score"]],
                     text=[f"{int(value):,}" for value in dist["reviews"]],
                     textposition="outside",
                 ))
                 apply_layout(fig)
-                fig.update_layout(showlegend=False, yaxis_title="Reviews")
+                fig.update_layout(showlegend=False, xaxis_title="Stars", yaxis_title="Reviews")
                 show(fig)
     with right:
         with st.container(border=True):
