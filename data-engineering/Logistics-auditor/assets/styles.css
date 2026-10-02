@@ -940,40 +940,31 @@ div[data-testid="stSelectbox"] label {
 .overview-hero {
   display: flex;
   align-items: center;
-  gap: 22px;
-  margin: 0 0 22px;
-  padding: 18px 22px;
-  background: var(--secondary-1000);
-  border-radius: 16px;
+  gap: 28px;
+  margin: 2px 0 28px;
+  padding: 0;
+  background: transparent;
 }
 
 .overview-film {
-  width: 96px;
-  height: 96px;
+  width: 120px;
+  height: 120px;
   flex: none;
-  border-radius: 18px;
+  border-radius: 24px;
   object-fit: cover;
-  background: #000;
-}
-
-.overview-kicker {
-  margin: 0 0 6px;
-  font-family: var(--fontFamilyPoppins);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--primary);
+  background: transparent;
 }
 
 .overview-hero h1 {
   margin: 0;
+  padding-left: 20px;
+  border-left: 3px solid var(--primary);
   font-family: var(--fontFamilyPoppins);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-  color: var(--base-white);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--secondary-1000);
 }
 
 .kpis {
@@ -1183,17 +1174,17 @@ div[data-testid="stDataFrame"] {
 
 @media (max-width: 900px) {
   .overview-hero {
-    align-items: flex-start;
-    gap: 14px;
-    padding: 14px;
+    gap: 16px;
   }
 
   .overview-film {
-    width: 72px;
-    height: 72px;
+    width: 84px;
+    height: 84px;
+    border-radius: 18px;
   }
 
   .overview-hero h1 {
+    padding-left: 14px;
     font-size: 22px;
   }
 
