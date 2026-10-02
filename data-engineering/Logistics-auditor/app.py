@@ -1545,10 +1545,7 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
           <video class="overview-film" autoplay muted loop playsinline aria-label="Veridi Logistics">
             <source src="{film}" type="video/mp4">
           </video>
-          <div>
-            <p class="overview-kicker">Overview</p>
-            <h1>Veridi Logistics Delivery Performance Audit</h1>
-          </div>
+          <h1>Veridi Logistics<br>Delivery Performance Audit</h1>
         </section>
         """,
         unsafe_allow_html=True,
