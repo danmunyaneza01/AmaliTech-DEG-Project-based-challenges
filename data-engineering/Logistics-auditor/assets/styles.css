@@ -154,18 +154,24 @@ section[data-testid="stSidebar"] > div,
   display: block;
   height: 36px;
   width: auto;
-  margin: 4px 0 16px;
+  margin: 8px auto 28px;
 }
 
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
   gap: 0;
-  align-items: flex-start;
+  align-items: center;
+}
+
+[data-testid="stSidebar"] [data-testid="stMarkdown"]:has(.brand-logo) {
+  display: flex;
+  justify-content: center;
+  width: 100% !important;
 }
 
 [data-testid="stSidebar"] [data-testid="stElementContainer"]:has(button) {
   width: fit-content !important;
   flex: none;
-  margin: 0 0 10px !important;
+  margin: 0 auto 10px !important;
 }
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
