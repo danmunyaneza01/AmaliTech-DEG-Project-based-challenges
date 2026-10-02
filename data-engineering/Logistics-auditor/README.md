@@ -165,11 +165,11 @@ Please edit this `README.md` file in your forked repository to include the follo
 
 ---
 
-## 🛑 CRITICAL: Pre-Submission Checklist
+## Pre-submission checklist
 
 **Before you submit your form, you MUST complete this checklist.**
 
-> ⚠️ **WARNING:** If you miss any of these items, your submission will be flagged as "Incomplete" and you will **NOT** be invited to an interview.
+> **Warning:** If you miss any of these items, your submission will be flagged as "Incomplete" and you will **NOT** be invited to an interview.
 >
 > **We do not accept "permission error" excuses. Test your links in Incognito Mode.**
 
@@ -192,6 +192,6 @@ Please edit this `README.md` file in your forked repository to include the follo
 - [x] I have completed **User Stories 1-4**.
 - [x] I have completed the **"Candidate's Choice"** challenge and explained it in the README.
 
-**✅ Only when you have checked every box above, proceed to the submission form.**
+**Only when you have checked every box above, proceed to the submission form.**
 
 ---
