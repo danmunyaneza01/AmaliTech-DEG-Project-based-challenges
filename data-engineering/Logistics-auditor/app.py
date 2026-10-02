@@ -323,37 +323,36 @@ def toggle_nav() -> None:
 
 def render_nav() -> None:
     st.session_state.setdefault("nav_open", True)
-    if not st.session_state.nav_open:
-        st.button(
-            "Menu",
-            key="nav_show",
-            icon=":material/left_panel_open:",
-            on_click=toggle_nav,
-        )
-        return
-    sections = (("overview", "Overview"), ("dashboard", "Dashboard"), ("predict", "Prediction"))
-    with st.sidebar:
+    if st.session_state.nav_open:
         st.button(
             "Hide",
             key="nav_hide",
             icon=":material/left_panel_close:",
             on_click=toggle_nav,
-            width="content",
         )
-        st.markdown(
-            f'<img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">',
-            unsafe_allow_html=True,
-        )
-        for key, label in sections:
-            active = st.session_state.section == key
-            st.button(
-                label,
-                key=f"nav_{key}",
-                type="primary" if active else "secondary",
-                width="content",
-                on_click=choose_section,
-                args=(key,),
+        sections = (("overview", "Overview"), ("dashboard", "Dashboard"), ("predict", "Prediction"))
+        with st.sidebar:
+            st.markdown(
+                f'<img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">',
+                unsafe_allow_html=True,
             )
+            for key, label in sections:
+                active = st.session_state.section == key
+                st.button(
+                    label,
+                    key=f"nav_{key}",
+                    type="primary" if active else "secondary",
+                    width="content",
+                    on_click=choose_section,
+                    args=(key,),
+                )
+        return
+    st.button(
+        "Menu",
+        key="nav_show",
+        icon=":material/left_panel_open:",
+        on_click=toggle_nav,
+    )
 
 
 def render_explanation() -> None:
