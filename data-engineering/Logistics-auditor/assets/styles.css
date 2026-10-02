@@ -61,7 +61,7 @@
   --accent: var(--primary);
   --warn: var(--primary-400);
   --orange: var(--primary);
-  --side-w: 188px;
+  --side-w: 220px;
   --nav-bar-h: 72px;
   --tab-row-h: 42px;
 }
@@ -185,15 +185,17 @@ section[data-testid="stSidebar"] > div,
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
 [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
   width: fit-content !important;
+  max-width: 100%;
   min-height: 32px;
-  height: 32px;
-  padding: 0 10px !important;
+  height: auto;
+  padding: 6px 10px !important;
   justify-content: flex-start;
   background: transparent !important;
   color: #d7e2ee !important;
   border: none !important;
   border-radius: 8px !important;
   box-shadow: none !important;
+  white-space: normal;
 }
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] p,
@@ -223,6 +225,7 @@ section[data-testid="stSidebar"] > div,
 }
 
 .st-key-nav_overview button p::before,
+.st-key-nav_delivery button p::before,
 .st-key-nav_dashboard button p::before,
 .st-key-nav_predict button p::before {
   content: "";
@@ -252,6 +255,7 @@ section[data-testid="stSidebar"] > div,
   border-radius: 8px !important;
 }
 .st-key-nav_overview button p { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M4 19h16'/><path d='M7 16V10'/><path d='M12 16V6'/><path d='M17 16v-4'/></svg>"); }
+.st-key-nav_delivery button p { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 7l9-4 9 4-9 4z'/><path d='M3 7v10l9 4V11'/><path d='M21 7v10l-9 4'/></svg>"); }
 .st-key-nav_dashboard button p { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v6l4 2'/></svg>"); }
 .st-key-nav_predict button p { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 16l5-5 4 4 7-8'/><path d='M14 7h6v6'/></svg>"); }
 
@@ -948,6 +952,11 @@ div[data-testid="stSelectbox"] label {
   line-height: 1.2;
   letter-spacing: -0.03em;
   color: var(--secondary-1000);
+}
+
+.home-card a {
+  color: var(--secondary-800);
+  font-weight: 600;
 }
 
 .kpis {

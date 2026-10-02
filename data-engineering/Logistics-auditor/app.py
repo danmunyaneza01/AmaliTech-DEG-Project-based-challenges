@@ -330,7 +330,12 @@ def render_nav() -> None:
             icon=":material/left_panel_close:",
             on_click=toggle_nav,
         )
-        sections = (("overview", "Overview"), ("dashboard", "Dashboard"), ("predict", "Prediction"))
+        sections = (
+            ("overview", "Overview"),
+            ("delivery", "Delivery Performance"),
+            ("dashboard", "Dashboard"),
+            ("predict", "Prediction"),
+        )
         with st.sidebar:
             st.markdown(
                 f'<img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">',
@@ -533,7 +538,7 @@ def render_method() -> None:
           </section>
           <section class="home-card">
             <h2><i class="mark file"></i>What you can open</h2>
-            <p>The notebook is the working record. This page is the audit. Dashboard is sales and payments. Prediction flags orders that are more likely to miss the date. The slides are not published yet.</p>
+            <p>The notebook is the working record. This page is the audit. Dashboard is sales and payments. Prediction flags orders that are more likely to miss the date. The notebook, the chart export, and the slides are linked from Overview.</p>
           </section>
         </div>
         """,
@@ -1553,15 +1558,97 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
 
 
 def render_overview(summaries: dict, commerce: dict | None) -> None:
+    del summaries, commerce
     film = "data:video/mp4;base64," + base64.b64encode((ROOT / "assets" / "vd.mp4").read_bytes()).decode("ascii")
     st.markdown(
         f"""
         <section class="overview-hero">
-          <h1>Veridi Logistics<br>Delivery Performance Audit</h1>
+          <h1>Veridi Logistics</h1>
           <video class="overview-film" autoplay muted loop playsinline aria-label="Veridi Logistics">
             <source src="{film}" type="video/mp4">
           </video>
         </section>
+        <p class="page-sub">This page is the guide to the project. The delivery audit, the sales view, and the risk check each have their own section. The outputs below are the notebook, the slides, and the summary tables.</p>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        """
+        <div class="method-grid">
+          <section class="home-card">
+            <h2><i class="mark chart"></i>Delivery Performance</h2>
+            <p>The audit of the promised day. It answers whether the miss is regional or nationwide, and how the review score sits next to a late arrival.</p>
+          </section>
+          <section class="home-card">
+            <h2><i class="mark clock"></i>Dashboard</h2>
+            <p>Sales, customers, payments, and the same late-day rule, narrowed by region, year, and whether the package was on time.</p>
+          </section>
+          <section class="home-card">
+            <h2><i class="mark trend"></i>Prediction</h2>
+            <p>A check on orders placed in 2018. It uses only the region and the promised lead time, both known on the day the customer orders.</p>
+          </section>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    open_delivery, open_dashboard, open_predict = st.columns(3)
+    open_delivery.button("Open Delivery Performance", key="go_delivery", width="stretch", on_click=choose_section, args=("delivery",))
+    open_dashboard.button("Open Dashboard", key="go_dashboard", width="stretch", on_click=choose_section, args=("dashboard",))
+    open_predict.button("Open Prediction", key="go_predict", width="stretch", on_click=choose_section, args=("predict",))
+    st.markdown(
+        """
+        <h2 class="section-label"><i class="mark file"></i>Outputs</h2>
+        <div class="method-grid">
+          <section class="home-card">
+            <h2>Notebook</h2>
+            <p><a href="https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/logistics_auditor.ipynb">logistics_auditor.ipynb</a></p>
+          </section>
+          <section class="home-card">
+            <h2>Charts</h2>
+            <p><a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/main/data-engineering/Logistics-auditor/logistics_auditor.html">HTML export of the notebook</a></p>
+          </section>
+          <section class="home-card">
+            <h2>Slides</h2>
+            <p><a href="https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf">veridi_delivery_audit.pdf</a></p>
+          </section>
+        </div>
+        <p class="audit-note">The two files below are the summary tables used on these pages, and the raw Olist archive they were built from when that archive is on this machine.</p>
+        """,
+        unsafe_allow_html=True,
+    )
+    tables, source = st.columns(2, gap="small")
+    with tables:
+        st.download_button(
+            "Analysis tables",
+            data=analysis_tables_zip(),
+            file_name="veridi_analysis_tables.zip",
+            mime="application/zip",
+            type="primary",
+            icon=":material/download:",
+            width="stretch",
+            help="Delivery status, regions, states, reviews by status, reviews by delay, and categories.",
+            key="overview_download_tables",
+        )
+    with source:
+        if (DATA_DIR / "olist.zip").exists():
+            st.download_button(
+                "Source CSV archive",
+                data=source_archive(),
+                file_name="olist_source_files.zip",
+                mime="application/zip",
+                type="primary",
+                icon=":material/download:",
+                width="stretch",
+                help="The public Olist files this audit is built from.",
+                key="overview_download_source",
+            )
+
+
+def render_delivery(summaries: dict, commerce: dict | None) -> None:
+    st.markdown(
+        """
+        <h1 class="page-title">Delivery Performance</h1>
+        <p class="page-sub">Veridi Logistics Delivery Performance Audit. The promised day, the regions, and the review score.</p>
         """,
         unsafe_allow_html=True,
     )
@@ -1642,7 +1729,7 @@ def main() -> None:
     st.session_state.setdefault("section", "overview")
     if st.session_state.section in {"home", "audit"}:
         st.session_state.section = "overview"
-    if st.session_state.section not in {"overview", "dashboard", "predict"}:
+    if st.session_state.section not in {"overview", "delivery", "dashboard", "predict"}:
         st.session_state.section = "overview"
     if st.query_params:
         st.query_params.clear()
@@ -1666,6 +1753,8 @@ def main() -> None:
             render_prediction(late_risk_cached())
         except FileNotFoundError as exc:
             st.error(str(exc) or "The Olist CSVs in data/ are required for the prediction.")
+    elif page == "delivery":
+        render_delivery(summaries, commerce)
     else:
         render_overview(summaries, commerce)
     render_flow()
