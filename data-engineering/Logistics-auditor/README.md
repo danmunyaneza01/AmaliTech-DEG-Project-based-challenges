@@ -12,7 +12,7 @@ Of 96,470 delivered orders, 6.8% missed the promised date and 3.9% were more tha
 ## B. Project Links
 
 - **Link to Notebook:** [logistics_auditor.ipynb](https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/logistics_auditor.ipynb). The repo is public. Charts are also in the [HTML export](https://htmlpreview.github.io/?https://raw.githubusercontent.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/main/data-engineering/Logistics-auditor/logistics_auditor.html).
-- **Link to Dashboard:** Not published yet. The app is `app.py` in this folder (`streamlit run app.py`). A public Streamlit Cloud link still needs a signed-in deploy.
+- **Link to Dashboard:** [Veridi delivery audit](https://amalitech-deg-project-based-challenges-3xxwauhctlmcjg4iithlir.streamlit.app/). The app is `app.py` in this folder. Overview reads the committed summary tables. Dashboard and Prediction need the raw Olist CSVs, which stay out of the repo.
 - **Link to Presentation:** [veridi_delivery_audit.pdf](https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf). No video.
 
 ## C. Technical Explanation
@@ -169,7 +169,7 @@ Please edit this `README.md` file in your forked repository to include the follo
 
 ### 2. Deliverable Checks
 
-- [ ] **My Dashboard link is publicly accessible.** (No login required).
+- [x] **My Dashboard link is publicly accessible.** (No login required).
 - [x] **My Presentation link is publicly accessible.** (Permissions set to "Anyone with the link can view").
 - [x] **I have updated this `README.md` file** with my Executive Summary and technical notes.
 
