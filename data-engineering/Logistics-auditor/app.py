@@ -1538,12 +1538,19 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
 
 
 def render_overview(summaries: dict, commerce: dict | None) -> None:
-    phrase = "Veridi Logistics Delivery Performance Audit overview"
+    film = "data:video/mp4;base64," + base64.b64encode((ROOT / "assets" / "vd.mp4").read_bytes()).decode("ascii")
     st.markdown(
-        f'<div class="typewriter" aria-label="{escape(phrase)}">'
-        f'<span class="typewriter-ghost" aria-hidden="true">{escape(phrase)}</span>'
-        f'<span class="typewriter-text">{escape(phrase)}</span>'
-        f"</div>",
+        f"""
+        <section class="overview-hero">
+          <video class="overview-film" autoplay muted loop playsinline aria-label="Veridi Logistics">
+            <source src="{film}" type="video/mp4">
+          </video>
+          <div>
+            <p class="overview-kicker">Overview</p>
+            <h1>Veridi Logistics Delivery Performance Audit</h1>
+          </div>
+        </section>
+        """,
         unsafe_allow_html=True,
     )
     render_answer(summaries)

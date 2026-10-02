@@ -937,48 +937,43 @@ div[data-testid="stSelectbox"] label {
   margin: 2px 0 8px;
 }
 
-.typewriter {
-  display: inline-grid;
-  margin: 0 0 18px;
-  background: none;
+.overview-hero {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 0 0 22px;
+  padding: 18px 22px;
+  background: var(--secondary-1000);
+  border-radius: 16px;
+}
+
+.overview-film {
+  width: 96px;
+  height: 96px;
+  flex: none;
+  border-radius: 18px;
+  object-fit: cover;
+  background: #000;
+}
+
+.overview-kicker {
+  margin: 0 0 6px;
   font-family: var(--fontFamilyPoppins);
-  font-size: 26px;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.overview-hero h1 {
+  margin: 0;
+  font-family: var(--fontFamilyPoppins);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--secondary-1000);
-}
-
-.typewriter-ghost,
-.typewriter-text {
-  grid-area: 1 / 1;
-  white-space: nowrap;
-}
-
-.typewriter-ghost {
-  visibility: hidden;
-}
-
-.typewriter-text {
-  justify-self: start;
-  width: 0;
-  min-width: 0;
-  overflow: hidden;
-  border-right: 0.12em solid var(--primary);
-  animation:
-    type-on 7.5s steps(130, end) infinite,
-    caret 0.65s step-end infinite;
-}
-
-@keyframes type-on {
-  0% { width: 0; }
-  40% { width: 100%; }
-  62% { width: 100%; }
-  100% { width: 0; }
-}
-
-@keyframes caret {
-  50% { border-color: transparent; }
+  color: var(--base-white);
 }
 
 .kpis {
@@ -1187,6 +1182,21 @@ div[data-testid="stDataFrame"] {
 }
 
 @media (max-width: 900px) {
+  .overview-hero {
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .overview-film {
+    width: 72px;
+    height: 72px;
+  }
+
+  .overview-hero h1 {
+    font-size: 22px;
+  }
+
   .brand-bar {
     padding: 0 16px;
   }
