@@ -162,7 +162,7 @@ section[data-testid="stSidebar"] > div,
   display: block;
   height: 36px;
   width: auto;
-  margin: 8px auto 48px;
+  margin: 8px auto 72px;
 }
 
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {

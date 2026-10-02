@@ -1563,7 +1563,7 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
     st.markdown(
         f"""
         <section class="overview-hero">
-          <h1>Veridi Logistics</h1>
+          <h1>Delivery Performance</h1>
           <video class="overview-film" autoplay muted loop playsinline aria-label="Veridi Logistics">
             <source src="{film}" type="video/mp4">
           </video>
