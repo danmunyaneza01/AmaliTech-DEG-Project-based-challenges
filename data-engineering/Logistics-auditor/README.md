@@ -25,7 +25,7 @@ https://amalitech-deg-project-based-challenges-3xxwauhctlmcjg4iithlir.streamlit.
 
 **Presentation**
 
-https://raw.githubusercontent.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf
+https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf
 
 No video. The repository is public. Overview on the dashboard uses the summary tables in this folder. Dashboard and Prediction read the raw Olist files, which are not committed.
 
