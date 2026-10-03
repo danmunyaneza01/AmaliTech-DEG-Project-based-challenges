@@ -163,9 +163,8 @@ def apply_layout(fig: go.Figure) -> go.Figure:
         hoverlabel=dict(namelength=-1, align="left", font=dict(size=13, color=INK)),
         dragmode=False,
     )
-    show_grid = st.session_state.get("section") != "dashboard"
-    fig.update_xaxes(automargin=True, showgrid=show_grid, gridcolor=GRID, zeroline=False)
-    fig.update_yaxes(automargin=True, showgrid=show_grid, gridcolor=GRID, zeroline=False)
+    fig.update_xaxes(automargin=True, showgrid=True, gridcolor=GRID, zeroline=False)
+    fig.update_yaxes(automargin=True, showgrid=True, gridcolor=GRID, zeroline=False)
     return fig
 
 
