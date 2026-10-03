@@ -1678,7 +1678,7 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
           </section>
           <section class="home-card">
             <h2>Slides</h2>
-            <p><a href="https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf">veridi_delivery_audit.pdf</a></p>
+            <p><a href="https://raw.githubusercontent.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf">veridi_delivery_audit.pdf</a></p>
           </section>
         </div>
         <p class="audit-note">Each section reads the same table of one row per order. The two downloads are at the end of this page.</p>
