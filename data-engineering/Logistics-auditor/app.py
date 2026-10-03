@@ -186,10 +186,12 @@ def even_bars(fig: go.Figure) -> None:
         return
     pad = (BAR_SLOTS - count) / 2
     axis_range = [-0.5 - pad, count - 0.5 + pad]
+    # Keep labels such as 2016 on the category axis. A numeric range would
+    # place those bars far outside the window.
     if horizontal:
-        fig.update_yaxes(range=axis_range)
+        fig.update_yaxes(type="category", range=axis_range)
     else:
-        fig.update_xaxes(range=axis_range)
+        fig.update_xaxes(type="category", range=axis_range)
 
 
 CHART_CONFIG = {
