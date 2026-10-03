@@ -1,15 +1,12 @@
-# Project Brief: The "Last Mile" Logistics Auditor
+# Veridi Logistics Delivery Performance Audit
 
-**Client:** Veridi Logistics (Global E-Commerce Aggregator)
-**Deliverable:** Public Dashboard, Code Notebook & Insight Presentation
+Public dashboard, notebook, and slides for the Last Mile delivery audit.
 
----
-
-## A. The Executive Summary
+## Executive summary
 
 Of 96,470 delivered orders, 6.8% missed the promised date and 3.9% were more than five days late. The median order still arrived 12 days early, so the failure is a slow tail, not the typical shipment. That tail is regional: the Northeast late rate is 12.7% against 6.1% in the Southeast, with Alagoas at 21.4% and Rio de Janeiro at 12.1% on 12,350 orders, while São Paulo is 4.5% on 40,494. Review scores track the miss directly: 4.29 on time, 2.99 when one to five days late, and 1.74 when super late. The Northeast was promised 31 days for a trip that takes 20, leaving the same 11-day cushion as the Southeast, where the trip takes 11 days. The North, given a 16-day cushion, misses less often (8.6%) despite a longer road, so the date shown to the customer is the lever.
 
-## B. Project Links
+## Project links
 
 **Notebook**
 
@@ -29,169 +26,8 @@ https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/raw/ref
 
 No video. The repository is public. Overview on the dashboard uses the summary tables in this folder. Dashboard and Prediction read the raw Olist files, which are not committed.
 
-## C. Technical Explanation
+## Technical notes
 
 **Data cleaning.** Orders, customers, and reviews are joined into one row per order. Reviews are not one-to-one: 547 orders had more than one review, so those rows were collapsed to a single `order_id` (mean score) before the join. Customers join on `customer_id` with a one-to-one check. The master table stays 99,441 rows, the same length as the orders table. `Days_Difference` is the promised calendar date minus the actual delivery calendar date. Orders that are canceled, unavailable, or missing a delivery date (2,971) are flagged **Not Delivered** and kept out of the late-rate denominator. Product categories stay on a separate item table, because one order can contain several products. Each order is labeled with the English category of its highest-priced item, using `product_category_name_translation.csv`. Category rates use categories with at least 200 delivered orders. Paths are relative (`data/` and `outputs/` next to the notebook).
 
 **Candidate's choice.** Late rate by state says where the promise was missed. It does not say whether the carrier was slow or the estimated date was too short. For each region the notebook compares promised lead time (purchase to estimated delivery) with actual lead time (purchase to delivery). The Northeast's longer promise only matched its longer trip, so the safety margin stayed about 11 days, the same as the Southeast, while the miss rate doubled. That is the feature a logistics manager can act on: widen the ETA for the Northeast and for Rio de Janeiro, where a broken date is what pulls the review score down.
-
----
-
-## 1. Business Context
-
-**Veridi Logistics** manages shipping for thousands of online sellers. Recently, the CEO has noticed a spike in negative customer reviews. She has a "gut feeling" that the problem isn't just that packages are late, but that the estimated delivery dates provided to customers are wildly inaccurate (i.e., we are over-promising and under-delivering).
-
-She needs you to audit the delivery data to find the root cause. She specifically wants to know: **"Are we failing specific regions, or is this a nationwide problem?"**
-
-Your job is to build a "Delivery Performance" audit tool that connects the dots between **Logistics Data** (when a package arrived) and **Customer Sentiment** (how they rated the experience).
-
-## 2. The Data
-
-You will use the **Olist E-Commerce Dataset**, a real commercial dataset from a Brazilian marketplace. This is a relational database dump, meaning the data is split across multiple CSV files.
-
-- **Source:** [Kaggle - Olist Brazilian E-Commerce Dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
-- **Key Files to Use:**
-  - `olist_orders_dataset.csv` (The central table)
-  - `olist_order_reviews_dataset.csv` (Sentiment)
-  - `olist_customers_dataset.csv` (Location)
-  - `olist_products_dataset.csv` (Categories)
-
-## 3. Tooling Requirements
-
-You have the flexibility to choose your development environment:
-
-- **Option A (Recommended):** Use a cloud-hosted notebook like **Google Colab**, or **Deepnote**, etc.
-- **Option B:** Use a local **Jupyter Notebook** or **VS Code**.
-  - _Condition:_ If you choose this, you must ensure your code is reproducible. Do not reference local file paths (e.g., `C:/Downloads/...`). Assume the dataset is in the same folder as your notebook.
-- **Dashboarding:** The final output must be a **publicly accessible link** (e.g., Tableau Public, Google Looker Studio, Streamlit Cloud, or PowerBI Web, etc.).
-
----
-
-## 4. User Stories & Acceptance Criteria
-
-### Story 1: The Schema Builder
-
-**As a** Data Engineer,
-**I want** to join the Orders, Reviews, and Customers tables into a single master dataset,
-**So that** I can analyze a customer's location and their review score in the same row.
-
-- **Acceptance Criteria:**
-  - Load the raw CSVs into your notebook.
-  - Perform the correct joins (e.g., join Reviews to Orders on `order_id`, join Customers to Orders on `customer_id`).
-  - **Check:** Ensure you don't accidentally duplicate rows (a common error with 1-to-many joins).
-
-### Story 2: The "Real" Delay Calculator
-
-**As a** Logistics Manager,
-**I want** to know the difference between the "Estimated Delivery Date" and the "Actual Delivery Date,"
-**So that** I can see how often we are lying to customers.
-
-- **Acceptance Criteria:**
-  - Create a new calculated column: `Days_Difference` = `order_estimated_delivery_date` - `order_delivered_customer_date`.
-  - Classify orders into statuses: "On Time", "Late", and "Super Late" (> 5 days late).
-  - Handle missing values: Some orders were never delivered (`order_status` = 'canceled' or 'unavailable'). These should be excluded or flagged separately.
-
-### Story 3: The Geographic Heatmap
-
-**As a** Regional Director,
-**I want** to see which specific States (`customer_state`) have the highest percentage of late deliveries,
-**So that** I can focus my repair efforts on the worst regions.
-
-- **Acceptance Criteria:**
-  - Calculate the % of late orders per State.
-  - Visualize this on a map or a bar chart.
-  - **Insight:** Identify if "Remote" states (far from the distribution center) are disproportionately affected.
-
-### Story 4: The Sentiment Correlation
-
-**As a** Customer Success Lead,
-**I want** to see if late deliveries actually cause bad reviews,
-**So that** I can prove to the CEO that logistics is the problem.
-
-- **Acceptance Criteria:**
-  - Create a visualization comparing "Delivery Delay (Days)" vs "Average Review Score (1-5)".
-  - Show the average review score for "On Time" orders vs. "Late" orders.
-
----
-
-## 5. Bonus User Story: The "Translation" Challenge
-
-**As a** Global Analyst,
-**I want** to see product categories in **English**, not Portuguese,
-**So that** I can understand if "Furniture" is harder to ship than "Electronics".
-
-- **Acceptance Criteria:**
-  - The `product_category_name` is in Portuguese (e.g., `cama_mesa_banho`).
-  - Use the `product_category_name_translation.csv` file included in the dataset (or create your own mapping) to translate these into English for your final dashboard.
-
----
-
-## 6. The "Candidate's Choice" Challenge
-
-**As a** Creative Problem Solver,
-**I want** to include one extra feature or analysis that adds specific business value,
-**So that** I can demonstrate my ability to think beyond the basic requirements.
-
-- **Instructions:**
-  - Add one more metric, chart, or drill-down.
-  - **Requirement:** You must justify _why_ this feature matters to the business in your README.
-
----
-
-## 7. Submission Guidelines
-
-Please edit this `README.md` file in your forked repository to include the following three sections at the top:
-
-### A. The Executive Summary
-
-- A 3-5 sentence summary of your findings.
-
-### B. Project Links
-
-- **Link to Notebook:** (e.g., Google Colab, etc.). _Ensure sharing permissions are set to "Anyone with the link can view"._
-- **Link to Dashboard:** (e.g., Tableau Public, etc.).
-- **Link to Presentation:** A link to a short slide deck (PDF/PPT) AND (Optional) a 2-minute video walkthrough (YouTube) explaining your results.
-
-### C. Technical Explanation
-
-- Briefly explain how you handled the "Data Cleaning".
-- Explain your "Candidate's Choice" addition.
-
-**Important Note on Code Submission:**
-
-- Upload your `.ipynb` notebook file to the repo.
-- **Crucial:** Also upload an **HTML or PDF export** of your notebook so we can see your charts even if GitHub fails to render the notebook code.
-- Once you are ready, please fill out the [Official Submission Form Here](https://forms.cloud.microsoft/e/CeQN2mCyUr) with your links
-
----
-
-## Pre-submission checklist
-
-**Before you submit your form, you MUST complete this checklist.**
-
-> **Warning:** If you miss any of these items, your submission will be flagged as "Incomplete" and you will **NOT** be invited to an interview.
->
-> **We do not accept "permission error" excuses. Test your links in Incognito Mode.**
-
-### 1. Repository & Code Checks
-
-- [x] **My GitHub Repo is Public.** (Open the link in a Private/Incognito window to verify).
-- [x] **I have uploaded the `.ipynb` notebook file.**
-- [x] **I have ALSO uploaded an HTML or PDF export** of the notebook.
-- [x] **I have NOT uploaded the massive raw dataset.** (Use `.gitignore` or just don't commit the CSV).
-- [x] **My code uses Relative Paths.**
-
-### 2. Deliverable Checks
-
-- [x] **My Dashboard link is publicly accessible.** (No login required).
-- [x] **My Presentation link is publicly accessible.** (Permissions set to "Anyone with the link can view").
-- [x] **I have updated this `README.md` file** with my Executive Summary and technical notes.
-
-### 3. Completeness
-
-- [x] I have completed **User Stories 1-4**.
-- [x] I have completed the **"Candidate's Choice"** challenge and explained it in the README.
-
-**Only when you have checked every box above, proceed to the submission form.**
-
----
