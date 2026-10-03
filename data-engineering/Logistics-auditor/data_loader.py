@@ -311,6 +311,7 @@ def load_late_risk(data_dir: Path, output_dir: Path | None = None) -> dict:
             raise FileNotFoundError("The Olist order file is not in this copy of the project.")
         payload = json.loads(saved_risk.read_text(encoding="utf-8"))
         payload["factors"] = pd.DataFrame(payload["factors"])
+        payload["deciles"] = pd.DataFrame(payload.get("deciles", []))
         return payload
     if orders_path.exists():
         orders = pd.read_csv(
@@ -395,6 +396,7 @@ def load_late_risk(data_dir: Path, output_dir: Path | None = None) -> dict:
     probability = model.predict_proba(test[features])[:, 1]
     test = test.copy()
     test["risk"] = probability
+    test["decile"] = pd.qcut(test["risk"].rank(method="first"), 10, labels=False) + 1
 
     region_rate = train.groupby("region")["is_late"].mean()
     baseline = test["region"].map(region_rate).fillna(train["is_late"].mean())
@@ -419,6 +421,11 @@ def load_late_risk(data_dir: Path, output_dir: Path | None = None) -> dict:
             label = f"{label} versus Southeast"
         factors.append({"factor": label, "odds": float(pow(2.718281828, coefficient))})
     factor_table = pd.DataFrame(factors).sort_values("odds", ascending=False)
+    deciles = (
+        test.groupby("decile", as_index=False)
+        .agg(orders=("is_late", "size"), late_rate=("is_late", "mean"), mean_risk=("risk", "mean"))
+        .sort_values("decile")
+    )
 
     return {
         "train_orders": int(len(train)),
@@ -430,4 +437,5 @@ def load_late_risk(data_dir: Path, output_dir: Path | None = None) -> dict:
         "recall": recall,
         "lift": precision / test_late if test_late else 0.0,
         "factors": factor_table,
+        "deciles": deciles,
     }
