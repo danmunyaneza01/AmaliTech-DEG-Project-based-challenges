@@ -841,10 +841,22 @@ def render_audit(summaries: dict, commerce: dict | None) -> None:
         sao = states.loc[states["customer_state"] == "SP"].iloc[0]
         rio = states.loc[states["customer_state"] == "RJ"].iloc[0]
         country_late = float(national["late_rate"])
+        try:
+            centers = state_centers_cached()
+        except FileNotFoundError:
+            centers = None
+        if centers is None:
+            picture = "Each bar is a state. The color is its region. The length is the share of arrived packages that missed the promised day."
+            place = "São Paulo is the shortest large bar"
+            rio_place = "Rio is a long bar"
+        else:
+            picture = f"Each dot is a state. The color is its region. A bigger dot has more orders. A dark ring means that state misses the promised day more often than Brazil ({pct(country_late)})."
+            place = "São Paulo is the biggest dot and has no ring"
+            rio_place = "Rio has a large ring"
         st.markdown(
             f"""
-            <p class="audit-note">No. The miss is in some states, not in every state. Each dot is a state. The color is its region. A bigger dot has more orders. A dark ring means that state misses the promised day more often than Brazil ({pct(country_late)}).</p>
-            <p class="audit-note">São Paulo is the biggest dot and has no ring: {pct(sao["late_rate"])} late on {int(sao["delivered_orders"]):,} orders. Rio has a large ring: {pct(rio["late_rate"])} late on {int(rio["delivered_orders"]):,} orders. The rings are mainly in the Northeast and in Rio.</p>
+            <p class="audit-note">No. The miss is in some states, not in every state. {picture}</p>
+            <p class="audit-note">{place}: {pct(sao["late_rate"])} late on {int(sao["delivered_orders"]):,} orders. {rio_place}: {pct(rio["late_rate"])} late on {int(rio["delivered_orders"]):,} orders. The higher rates are mainly in the Northeast and in Rio.</p>
             """,
             unsafe_allow_html=True,
         )
@@ -860,17 +872,50 @@ def render_audit(summaries: dict, commerce: dict | None) -> None:
             f'<span class="map-key"><i style="background:{color}"></i>{escape(name)}</span>'
             for name, color in REGION_COLORS.items()
         )
-        st.markdown(
-            f'<div class="map-legend">{keys}<span class="map-key note">Bigger dot = more orders</span><span class="map-key note">Dark ring = worse than Brazil</span></div>',
-            unsafe_allow_html=True,
-        )
-        try:
-            centers = state_centers_cached()
-        except FileNotFoundError:
-            centers = None
         if centers is None:
-            st.info("The geolocation file is not in data/, so the map cannot be placed.")
+            st.markdown(
+                f'<div class="map-legend">{keys}<span class="map-key note">Bar length = late share of arrived packages</span></div>',
+                unsafe_allow_html=True,
+            )
+            chart_states = states.copy()
+            if map_region != "All regions":
+                chart_states = chart_states.loc[chart_states["region"] == map_region]
+            if map_focus == "Worse than Brazil":
+                chart_states = chart_states.loc[chart_states["late_rate"] > country_late]
+            if chart_states.empty:
+                st.info("No state in this view misses the promised day more often than Brazil.")
+            else:
+                chart_states = chart_states.sort_values("late_rate", ascending=True)
+                fig = go.Figure(go.Bar(
+                    y=chart_states["customer_state"],
+                    x=chart_states["late_rate"],
+                    orientation="h",
+                    marker_color=[REGION_COLORS.get(name, MUTED) for name in chart_states["region"]],
+                    text=[
+                        f"{pct(value)} · {int(count):,}"
+                        for value, count in zip(chart_states["late_rate"], chart_states["delivered_orders"])
+                    ],
+                    textposition="outside",
+                    hovertemplate="%{y}<br>%{text}<extra></extra>",
+                ))
+                apply_layout(fig)
+                fig.update_layout(
+                    showlegend=False,
+                    height=max(380, 22 * len(chart_states) + 80),
+                    xaxis_tickformat=".0%",
+                    xaxis_title="Late rate",
+                    xaxis_range=[0, max(float(chart_states["late_rate"].max()) * 1.55, 0.2)],
+                    yaxis=dict(
+                        categoryorder="array",
+                        categoryarray=list(chart_states["customer_state"]),
+                    ),
+                )
+                show(fig)
         else:
+            st.markdown(
+                f'<div class="map-legend">{keys}<span class="map-key note">Bigger dot = more orders</span><span class="map-key note">Dark ring = worse than Brazil</span></div>',
+                unsafe_allow_html=True,
+            )
             mapped = states.merge(centers, on="customer_state", how="inner")
             if map_region != "All regions":
                 mapped = mapped.loc[mapped["region"] == map_region]
