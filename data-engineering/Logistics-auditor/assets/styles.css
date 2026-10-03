@@ -305,11 +305,12 @@ section[data-testid="stSidebar"] > div,
   overflow: visible !important;
 }
 
-.js-plotly-plot .plotly .modebar {
-  background: #ffffff !important;
-  border: 1px solid var(--secondary-1000);
-  border-radius: var(--round-sm);
-  padding: 2px 4px;
+.js-plotly-plot .modebar-container,
+.js-plotly-plot .plotly .modebar,
+.js-plotly-plot .modebar-group {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .js-plotly-plot .plotly .modebar-btn path {
