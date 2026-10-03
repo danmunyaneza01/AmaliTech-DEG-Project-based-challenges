@@ -167,7 +167,7 @@ section[data-testid="stSidebar"] > div,
 
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
   gap: 0;
-  align-items: center;
+  align-items: flex-start;
 }
 
 [data-testid="stSidebar"] [data-testid="stMarkdown"]:has(.brand-logo) {
@@ -179,7 +179,7 @@ section[data-testid="stSidebar"] > div,
 [data-testid="stSidebar"] [data-testid="stElementContainer"]:has(button) {
   width: fit-content !important;
   flex: none;
-  margin: 0 auto 10px !important;
+  margin: 0 0 10px !important;
 }
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
