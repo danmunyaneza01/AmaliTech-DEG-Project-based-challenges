@@ -1776,17 +1776,21 @@ def render_delivery(summaries: dict, commerce: dict | None) -> None:
 
 def render_prediction(risk: dict) -> None:
     st.markdown('<h1 class="page-title"><i class="mark trend"></i>Prediction</h1>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="page-sub">Will this order miss its date? The check uses only the region and the promised lead time, both known when the customer orders.</p>',
-        unsafe_allow_html=True,
-    )
+    factors = risk["factors"]
+    northeast = factors.loc[factors["factor"].str.startswith("Northeast"), "odds"]
+    northeast_odds = float(northeast.iloc[0]) if len(northeast) else float("nan")
     st.markdown(
         f"""
-        <section class="callout accent">
-          <h2>Why this, and not a sales forecast</h2>
-          <p>The file is a finished history through August 2018. Forecasting the next month of sales would invent a future the data does not contain. The useful question is whether an order can be flagged as risky on the day it is placed. Orders from 2017 teach the pattern. Orders from January to August 2018 are the check, and they were not used to fit it.</p>
-          <p>On that check, the riskiest tenth of orders are late {pct(risk["precision"])} of the time, against {pct(risk["test_late_rate"])} of all 2018 deliveries. That tenth catches {pct(risk["recall"])} of the late orders. A score that only remembers each region’s old late rate separates late from on-time less cleanly ({risk["baseline_auc"]:.2f} versus {risk["auc"]:.2f} for the fuller score).</p>
-        </section>
+        <div class="recommend-grid">
+          <section class="home-card">
+            <h2><i class="mark target"></i>What we are predicting</h2>
+            <p>Logistic regression estimates the chance that a delivered order misses the promised day. The only inputs are the customer’s region and the number of days Veridi promised, both known when the order is placed. It does not forecast sales. Seller handling time and the carrier’s road time are unknown that day, so they are not used. Orders placed before 2018 teach the pattern. January through August 2018 is the check, and those orders were not used to fit it.</p>
+          </section>
+          <section class="home-card finding">
+            <h2><i class="mark flag"></i>The outcome</h2>
+            <p>On the 2018 check, {pct(risk["test_late_rate"])} of deliveries were late. The riskiest tenth were late {pct(risk["precision"])} of the time, {risk["lift"]:.1f} times the overall rate, and that tenth caught {pct(risk["recall"])} of the late orders. The score separates late from on time only slightly better than remembering each region’s old late rate ({risk["auc"]:.2f} versus {risk["baseline_auc"]:.2f}). At the same promised window, a Northeast order is {northeast_odds:.1f} times as likely to be late as a Southeast order.</p>
+          </section>
+        </div>
         """,
         unsafe_allow_html=True,
     )
@@ -1832,7 +1836,7 @@ def render_prediction(risk: dict) -> None:
             show(fig)
 
     st.markdown(
-        '<p class="foot">The score is a simple logistic model. It is a check on this history, not a live promise engine. Seller handling time and the carrier’s actual road time are unknown on the day the order is placed, so they are not used.</p>',
+        '<p class="foot">The score is a check on this history, not a live promise engine.</p>',
         unsafe_allow_html=True,
     )
 
