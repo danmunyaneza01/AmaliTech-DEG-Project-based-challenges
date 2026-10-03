@@ -1610,36 +1610,10 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
             <p><a href="https://github.com/danmunyaneza01/AmaliTech-DEG-Project-based-challenges/blob/main/data-engineering/Logistics-auditor/veridi_delivery_audit.pdf">veridi_delivery_audit.pdf</a></p>
           </section>
         </div>
-        <p class="audit-note">The two files below are the summary tables used on these pages, and the raw Olist archive they were built from when that archive is on this machine.</p>
+        <p class="audit-note">Each section reads the same table of one row per order. The two downloads are at the end of this page.</p>
         """,
         unsafe_allow_html=True,
     )
-    tables, source = st.columns(2, gap="small")
-    with tables:
-        st.download_button(
-            "Analysis tables",
-            data=analysis_tables_zip(),
-            file_name="veridi_analysis_tables.zip",
-            mime="application/zip",
-            type="primary",
-            icon=":material/download:",
-            width="stretch",
-            help="Delivery status, regions, states, reviews by status, reviews by delay, and categories.",
-            key="overview_download_tables",
-        )
-    with source:
-        if (DATA_DIR / "olist.zip").exists():
-            st.download_button(
-                "Source CSV archive",
-                data=source_archive(),
-                file_name="olist_source_files.zip",
-                mime="application/zip",
-                type="primary",
-                icon=":material/download:",
-                width="stretch",
-                help="The public Olist files this audit is built from.",
-                key="overview_download_source",
-            )
 
 
 def render_delivery(summaries: dict, commerce: dict | None) -> None:
@@ -1755,7 +1729,7 @@ def main() -> None:
         render_delivery(summaries, commerce)
     else:
         render_overview(summaries, commerce)
-    render_flow()
+        render_flow()
 
 
 main()
