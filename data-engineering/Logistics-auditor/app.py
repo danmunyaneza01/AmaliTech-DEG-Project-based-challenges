@@ -71,12 +71,12 @@ def summaries_cached():
 @st.cache_data
 def commerce_cached():
     # Rebuild when the order table used by the dashboard filters changes.
-    return load_commerce(DATA_DIR)
+    return load_commerce(DATA_DIR, OUTPUT_DIR)
 
 
 @st.cache_data
 def late_risk_cached():
-    return load_late_risk(DATA_DIR)
+    return load_late_risk(DATA_DIR, OUTPUT_DIR)
 
 
 @st.cache_data

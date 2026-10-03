@@ -40,7 +40,61 @@ def load_summaries(output_dir: Path) -> dict[str, pd.DataFrame]:
     return {name.removesuffix(".csv"): pd.read_csv(output_dir / name) for name in OUTPUT_NAMES}
 
 
-def load_commerce(data_dir: Path) -> dict:
+def _as_late_flag(values: pd.Series) -> pd.Series:
+    return values.map({"true": True, "false": False, True: True, False: False})
+
+
+def _load_saved_commerce(output_dir: Path) -> dict:
+    """Dashboard tables built from the raw files and stored without those files."""
+    names = (
+        "commerce_frame.csv",
+        "commerce_items.csv",
+        "commerce_payments.csv",
+        "commerce_stages.csv",
+        "commerce_monthly.csv",
+    )
+    missing = [name for name in names if not (output_dir / name).exists()]
+    if missing:
+        raise FileNotFoundError("Missing commerce tables: " + ", ".join(missing))
+    frame = pd.read_csv(output_dir / "commerce_frame.csv")
+    frame["is_late"] = _as_late_flag(frame["is_late"])
+    items = pd.read_csv(output_dir / "commerce_items.csv")
+    payments = pd.read_csv(output_dir / "commerce_payments.csv")
+    stages = pd.read_csv(output_dir / "commerce_stages.csv")
+    monthly = pd.read_csv(output_dir / "commerce_monthly.csv")
+    delivered = frame.loc[frame["is_late"].notna()]
+    reviewed = delivered.loc[delivered["review_score"].notna()]
+    negatives = reviewed.loc[reviewed["review_score"] <= 2]
+    orders_per_customer = frame.groupby("customer_unique_id").size()
+    return {
+        "revenue": float(items["price"].sum()),
+        "orders": int(frame["order_id"].nunique()),
+        "customers": int(frame["customer_unique_id"].nunique()),
+        "aov": float(frame["price"].mean()),
+        "avg_review": float(frame["review_score"].mean()),
+        "avg_delivery_days": float(delivered["actual_days"].mean()),
+        "late_rate": float(delivered["is_late"].mean()),
+        "repeat_rate": float((orders_per_customer > 1).mean()),
+        "negative_rate": float((reviewed["review_score"] <= 2).mean()) if len(reviewed) else float("nan"),
+        "negative_rate_late": float(reviewed.loc[reviewed["is_late"] == True, "review_score"].le(2).mean()) if len(reviewed) else float("nan"),
+        "negative_rate_ontime": float(reviewed.loc[reviewed["is_late"] == False, "review_score"].le(2).mean()) if len(reviewed) else float("nan"),
+        "negative_from_ontime": float((negatives["is_late"] == False).mean()) if len(negatives) else float("nan"),
+        "monthly": monthly,
+        "categories": items.groupby("category", as_index=False)["price"].sum().sort_values("price", ascending=False).head(8),
+        "score_dist": frame["review_score"].dropna().value_counts().sort_index().rename_axis("score").reset_index(name="reviews"),
+        "state_orders": frame.groupby("customer_state", as_index=False).size().rename(columns={"size": "orders"}).sort_values("orders", ascending=False),
+        "payments": payments["payment_type"].value_counts().rename_axis("payment_type").reset_index(name="records"),
+        "payment_rows": payments,
+        "item_rows": items,
+        "frame": frame,
+        "stages": stages,
+    }
+
+
+def load_commerce(data_dir: Path, output_dir: Path | None = None) -> dict:
+    output_dir = output_dir or data_dir.parent / "outputs"
+    if not (data_dir / "olist_orders_dataset.csv").exists():
+        return _load_saved_commerce(output_dir)
     orders = pd.read_csv(
         data_dir / "olist_orders_dataset.csv",
         usecols=[
@@ -235,7 +289,7 @@ REGION = {
 REGION_ORDER = ["Southeast", "South", "Central-West", "Northeast", "North"]
 
 
-def load_late_risk(data_dir: Path) -> dict:
+def load_late_risk(data_dir: Path, output_dir: Path | None = None) -> dict:
     """Score miss risk from facts known when the order is placed.
 
     A sales forecast does not fit: the file ends in 2018 and the decision is
@@ -248,42 +302,73 @@ def load_late_risk(data_dir: Path) -> dict:
     from sklearn.pipeline import Pipeline
     from sklearn.preprocessing import OneHotEncoder
 
-    orders = pd.read_csv(
-        data_dir / "olist_orders_dataset.csv",
-        usecols=[
-            "order_id",
-            "customer_id",
-            "order_status",
-            "order_purchase_timestamp",
-            "order_delivered_customer_date",
-            "order_estimated_delivery_date",
-        ],
-        parse_dates=[
-            "order_purchase_timestamp",
-            "order_delivered_customer_date",
-            "order_estimated_delivery_date",
-        ],
-    )
-    customers = pd.read_csv(
-        data_dir / "olist_customers_dataset.csv",
-        usecols=["customer_id", "customer_state"],
-    )
-    delivered = orders.loc[
-        (orders["order_status"] == "delivered")
-        & orders["order_delivered_customer_date"].notna()
-        & orders["order_estimated_delivery_date"].notna()
-    ].copy()
-    delivered["is_late"] = (
-        delivered["order_estimated_delivery_date"].dt.normalize()
-        - delivered["order_delivered_customer_date"].dt.normalize()
-    ).dt.days < 0
-    delivered["promised_lead_days"] = (
-        delivered["order_estimated_delivery_date"].dt.normalize()
-        - delivered["order_purchase_timestamp"].dt.normalize()
-    ).dt.days
-    delivered = delivered.merge(customers, on="customer_id", how="left")
-    delivered["region"] = delivered["customer_state"].map(REGION).fillna("Other")
-    delivered = delivered.loc[delivered["promised_lead_days"].between(0, 120)]
+    output_dir = output_dir or data_dir.parent / "outputs"
+    orders_path = data_dir / "olist_orders_dataset.csv"
+    if orders_path.exists():
+        orders = pd.read_csv(
+            orders_path,
+            usecols=[
+                "order_id",
+                "customer_id",
+                "order_status",
+                "order_purchase_timestamp",
+                "order_delivered_customer_date",
+                "order_estimated_delivery_date",
+            ],
+            parse_dates=[
+                "order_purchase_timestamp",
+                "order_delivered_customer_date",
+                "order_estimated_delivery_date",
+            ],
+        )
+        customers = pd.read_csv(
+            data_dir / "olist_customers_dataset.csv",
+            usecols=["customer_id", "customer_state"],
+        )
+    else:
+        orders = None
+        customers = None
+        joined = pd.read_csv(
+            output_dir / "joined_orders.csv",
+            usecols=[
+                "order_status",
+                "order_purchase_timestamp",
+                "order_delivered_customer_date",
+                "order_estimated_delivery_date",
+                "is_late",
+                "promised_lead_days",
+                "region",
+            ],
+            parse_dates=[
+                "order_purchase_timestamp",
+                "order_delivered_customer_date",
+                "order_estimated_delivery_date",
+            ],
+        )
+        delivered = joined.loc[
+            (joined["order_status"] == "delivered")
+            & joined["order_delivered_customer_date"].notna()
+            & joined["order_estimated_delivery_date"].notna()
+        ].copy()
+        delivered["is_late"] = _as_late_flag(delivered["is_late"]).astype(bool)
+        delivered = delivered.loc[delivered["promised_lead_days"].between(0, 120)]
+    if orders is not None:
+        delivered = orders.loc[
+            (orders["order_status"] == "delivered")
+            & orders["order_delivered_customer_date"].notna()
+            & orders["order_estimated_delivery_date"].notna()
+        ].copy()
+        delivered["is_late"] = (
+            delivered["order_estimated_delivery_date"].dt.normalize()
+            - delivered["order_delivered_customer_date"].dt.normalize()
+        ).dt.days < 0
+        delivered["promised_lead_days"] = (
+            delivered["order_estimated_delivery_date"].dt.normalize()
+            - delivered["order_purchase_timestamp"].dt.normalize()
+        ).dt.days
+        delivered = delivered.merge(customers, on="customer_id", how="left")
+        delivered["region"] = delivered["customer_state"].map(REGION).fillna("Other")
+        delivered = delivered.loc[delivered["promised_lead_days"].between(0, 120)]
 
     train = delivered.loc[delivered["order_purchase_timestamp"] < "2018-01-01"]
     test = delivered.loc[
