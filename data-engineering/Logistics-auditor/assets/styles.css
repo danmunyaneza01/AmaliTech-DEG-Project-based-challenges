@@ -1112,16 +1112,19 @@ div[data-testid="stSelectbox"] label {
 }
 
 .dash-kpis .kpi .mark {
-  width: 14px;
-  height: 14px;
+  display: block;
+  width: 18px;
+  height: 18px;
   background: var(--kpi-tone);
 }
 
 .dash-kpis .kpi-icon {
-  width: 22px;
-  height: 22px;
-  margin-bottom: 4px;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 6px;
   border-radius: 4px;
+  background: var(--card);
+  border: 1px solid color-mix(in srgb, var(--kpi-tone) 40%, white);
 }
 
 .kpi[class*="tone-"] b {
