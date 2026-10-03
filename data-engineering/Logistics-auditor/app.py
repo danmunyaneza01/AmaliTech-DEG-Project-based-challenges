@@ -1176,7 +1176,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
         f'<div class="kpi {tone}"><span class="kpi-icon"><i class="mark {mark}"></i></span><span>{escape(label)}</span><b>{escape(value)}</b><i>{escape(note)}</i></div>'
         for mark, tone, label, value, note in kpis
     )
-    st.markdown(f'<div class="kpis">{cards}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="kpis dash-kpis">{cards}</div>', unsafe_allow_html=True)
 
     st.markdown('<h2 class="section-label"><i class="mark chart"></i>Where the sales are, and where the date fails</h2>', unsafe_allow_html=True)
     left, right = st.columns(2)
