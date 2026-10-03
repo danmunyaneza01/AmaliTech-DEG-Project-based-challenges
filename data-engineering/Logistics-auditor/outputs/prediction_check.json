@@ -1,0 +1,32 @@
+{
+  "train_orders": 43691,
+  "test_orders": 52775,
+  "test_late_rate": 0.07727143533870204,
+  "auc": 0.5821749213135811,
+  "baseline_auc": 0.5365838433238664,
+  "precision": 0.15249638205499277,
+  "recall": 0.20671897989210397,
+  "lift": 1.9735155867955476,
+  "factors": [
+    {
+      "factor": "Northeast versus Southeast",
+      "odds": 2.9558361416206673
+    },
+    {
+      "factor": "North versus Southeast",
+      "odds": 1.4611944757022577
+    },
+    {
+      "factor": "South versus Southeast",
+      "odds": 1.104853104064692
+    },
+    {
+      "factor": "Central-West versus Southeast",
+      "odds": 1.068729040995461
+    },
+    {
+      "factor": "Each extra day promised",
+      "odds": 0.973186651333807
+    }
+  ]
+}

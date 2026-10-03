@@ -1,6 +1,11 @@
-# Raw Olist extracts are large and must not be committed.
+# The assignment forbids committing the Olist dataset.
+# Keep the raw files, and any order-level copy of them, off GitHub.
 data/*.csv
 data/*.zip
+outputs/joined_orders.csv
+outputs/commerce_frame.csv
+outputs/commerce_items.csv
+outputs/commerce_payments.csv
 
 # Notebook and Python caches
 .ipynb_checkpoints/
