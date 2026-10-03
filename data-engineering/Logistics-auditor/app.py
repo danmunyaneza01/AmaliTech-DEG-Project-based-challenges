@@ -1566,7 +1566,78 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
           <h1>Delivery Performance</h1>
           <img class="overview-film" src="{film}" alt="Veridi Logistics">
         </section>
-        <p class="page-sub">This page is the guide to the project. The delivery audit, the sales view, and the risk check each have their own section. The outputs below are the notebook, the slides, and the summary tables.</p>
+        <p class="page-sub">The Last Mile Logistics Auditor examines how accurately Veridi Logistics delivers orders compared with the dates promised to customers. The analysis connects delivery performance with customer review scores to identify where delays occur and whether they are associated with a poorer customer experience.</p>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        """
+        <section class="callout accent">
+          <h2>Business question</h2>
+          <p><b>Are delivery performance problems concentrated in specific regions, or are they widespread across the market?</b></p>
+        </section>
+        <h2 class="section-label"><i class="mark chart"></i>What this analysis measures</h2>
+        <div class="guide-grid">
+          <section class="home-card">
+            <h2><i class="mark check"></i>Delivery performance</h2>
+            <p>Measures whether orders arrive on time or later than the estimated delivery date.</p>
+          </section>
+          <section class="home-card">
+            <h2><i class="mark clock"></i>Delivery delay</h2>
+            <p>Measures the number of days between the promised delivery date and the actual customer delivery date.</p>
+          </section>
+          <section class="home-card">
+            <h2><i class="mark pin"></i>Regional performance</h2>
+            <p>Compares late-delivery rates across customer states to identify geographic differences in delivery performance.</p>
+          </section>
+          <section class="home-card">
+            <h2><i class="mark star"></i>Customer experience</h2>
+            <p>Examines whether customers who experience delivery delays tend to give lower review scores.</p>
+          </section>
+        </div>
+        <h2 class="section-label"><i class="mark route"></i>How to read this dashboard</h2>
+        <section class="callout accent">
+          <ul>
+            <li>Monitor overall delivery performance.</li>
+            <li>Identify states with higher late-delivery rates.</li>
+            <li>Compare on-time and delayed orders.</li>
+            <li>Understand the relationship between delivery delays and customer ratings.</li>
+            <li>Explore whether certain product categories experience greater delivery challenges.</li>
+          </ul>
+        </section>
+        <h2 class="section-label"><i class="mark file"></i>Data</h2>
+        <section class="callout accent">
+          <p>This analysis uses the <b>Olist Brazilian E-Commerce Dataset</b>, a real-world e-commerce dataset containing order, customer, product, and customer review information.</p>
+        </section>
+        <h2 class="section-label"><i class="mark calendar"></i>Delivery status</h2>
+        <div class="method-grid">
+          <section class="home-card">
+            <h2><i class="mark check"></i>On time</h2>
+            <p>Delivered on or before the estimated delivery date.</p>
+          </section>
+          <section class="home-card">
+            <h2><i class="mark alert"></i>Late</h2>
+            <p>Delivered after the estimated delivery date.</p>
+          </section>
+          <section class="home-card">
+            <h2><i class="mark clock"></i>Super late</h2>
+            <p>Delivered more than 5 days after the estimated delivery date.</p>
+          </section>
+        </div>
+        <h2 class="section-label"><i class="mark layers"></i>Analytical approach</h2>
+        <ol class="guide-steps">
+          <li><b>Orders, customers, reviews, and products</b></li>
+          <li><b>Data cleaning and validation</b></li>
+          <li><b>Promised versus actual delivery</b></li>
+          <li><b>Regional performance</b></li>
+          <li><b>Customer sentiment</b></li>
+          <li><b>Business insights</b></li>
+        </ol>
+        <section class="callout accent">
+          <h2>Purpose</h2>
+          <p>The goal is not only to identify late deliveries, but to understand <b>where delivery performance is weakest and how delivery delays relate to customer experience</b>, providing evidence for further operational investigation.</p>
+        </section>
+        <h2 class="section-label"><i class="mark route"></i>Where to go next</h2>
         """,
         unsafe_allow_html=True,
     )
