@@ -737,10 +737,10 @@ def render_audit(summaries: dict, commerce: dict | None) -> None:
             "</tr>"
         )
     st.markdown(
-        '<table class="audit-table"><thead><tr>'
+        '<div class="table-wrap"><table class="audit-table"><thead><tr>'
         "<th>Region</th><th>Deliveries</th><th>On time</th><th>Late</th>"
         "<th>Avg days late</th><th>Median days late</th><th>Longest delay</th><th>Avg rating</th>"
-        f"</tr></thead><tbody>{''.join(table_rows)}</tbody></table>"
+        f"</tr></thead><tbody>{''.join(table_rows)}</tbody></table></div>"
         '<p class="audit-note">On time and late use every package that arrived. Average days late, the median, and the longest delay count only packages that missed the promised day. A small region can post a high rate on few orders. São Paulo is 4.5% late on 40,494 deliveries. Rio de Janeiro is 12.1% on 12,350. Alagoas is 21.4% on 397. Roraima (41), Acre (80), and Amapá (67) have fewer than 100 deliveries, so those rates are low-confidence. Ranked by late parcels times the share of 1- and 2-star reviews, Rio is first and São Paulo is second: São Paulo’s rate is low, and its misses are still numerous. The South, Southeast, and Central-West sit at or under the national 6.8%. The Northeast is about twice the Southeast. The North is only a little above the country, after a wider promised day. Packages that stay in the seller’s state are late 4.5% of the time (34,690 deliveries). Packages that cross a state line are late 8.0% of the time (61,780).</p>',
         unsafe_allow_html=True,
     )
@@ -1645,7 +1645,7 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
 def render_delivery(summaries: dict, commerce: dict | None) -> None:
     st.markdown(
         """
-        <h1 class="page-title">Delivery Performance</h1>
+        <h1 class="page-title"><i class="mark box"></i>Delivery Performance</h1>
         <p class="page-sub">Veridi Logistics Delivery Performance Audit. The promised day, the regions, and the review score.</p>
         """,
         unsafe_allow_html=True,
