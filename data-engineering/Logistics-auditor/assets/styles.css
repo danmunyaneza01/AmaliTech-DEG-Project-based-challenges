@@ -1093,26 +1093,35 @@ div[data-testid="stSelectbox"] label {
 .kpi.tone-red { --kpi-tone: var(--danger); }
 .kpi.tone-deep { --kpi-tone: var(--secondary-800); }
 
+.dash-kpis {
+  grid-auto-flow: row;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
 .dash-kpis .kpi {
   border: none;
-  border-radius: 0;
-  background: var(--kpi-tone);
-  min-height: 128px;
-  padding: 14px 12px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--kpi-tone) 18%, white);
+  min-height: 0;
+  padding: 8px 10px;
 }
 
 .dash-kpis .kpi:hover {
-  border-color: transparent;
   transform: none;
 }
 
 .dash-kpis .kpi .mark {
-  background: var(--card);
+  width: 14px;
+  height: 14px;
+  background: var(--kpi-tone);
 }
 
 .dash-kpis .kpi-icon {
-  border-radius: 0;
-  background: color-mix(in srgb, var(--card) 18%, transparent);
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+  border-radius: 4px;
 }
 
 .kpi[class*="tone-"] b {
@@ -1142,10 +1151,17 @@ div[data-testid="stSelectbox"] label {
   color: var(--mu);
 }
 
-.dash-kpis .kpi span,
-.dash-kpis .kpi b,
+.dash-kpis .kpi b {
+  margin-top: 2px;
+  font-size: 16px;
+}
+
+.dash-kpis .kpi span {
+  font-size: 11px;
+}
+
 .dash-kpis .kpi i:not(.mark) {
-  color: var(--card);
+  font-size: 10px;
 }
 
 .callout {
