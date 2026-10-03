@@ -28,8 +28,6 @@ WARN = "#ff9332"
 ORANGE = "#ff5a00"
 INK = "#3e3d3a"
 MUTED = "#6f6c66"
-GRID = "#e5e7eb"
-
 STATUS_ORDER = ["On Time", "Late", "Super Late", "Not Delivered"]
 REVIEW_STATUS_ORDER = ["On Time", "Late", "Super Late"]
 DELAY_BIN_ORDER = [
@@ -163,8 +161,8 @@ def apply_layout(fig: go.Figure) -> go.Figure:
         hoverlabel=dict(namelength=-1, align="left", font=dict(size=13, color=INK)),
         dragmode=False,
     )
-    fig.update_xaxes(automargin=True, showgrid=True, gridcolor=GRID, zeroline=False)
-    fig.update_yaxes(automargin=True, showgrid=True, gridcolor=GRID, zeroline=False)
+    fig.update_xaxes(automargin=True, showgrid=False, zeroline=False)
+    fig.update_yaxes(automargin=True, showgrid=False, zeroline=False)
     return fig
 
 
