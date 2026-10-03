@@ -182,12 +182,20 @@ section[data-testid="stSidebar"] > div,
   margin: 0 0 10px !important;
 }
 
+[data-testid="stSidebar"] [data-testid="stElementContainer"].st-key-nav_overview,
+[data-testid="stSidebar"] [data-testid="stElementContainer"].st-key-nav_delivery,
+[data-testid="stSidebar"] [data-testid="stElementContainer"].st-key-nav_dashboard,
+[data-testid="stSidebar"] [data-testid="stElementContainer"].st-key-nav_predict {
+  width: 214px !important;
+}
+
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
 [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
   display: inline-flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  width: fit-content !important;
+  box-sizing: border-box;
+  width: 214px !important;
   max-width: 100%;
   min-height: 36px;
   height: 36px;
