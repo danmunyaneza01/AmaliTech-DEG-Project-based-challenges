@@ -163,8 +163,9 @@ def apply_layout(fig: go.Figure) -> go.Figure:
         hoverlabel=dict(namelength=-1, align="left", font=dict(size=13, color=INK)),
         dragmode=False,
     )
-    fig.update_xaxes(automargin=True, gridcolor=GRID, zeroline=False)
-    fig.update_yaxes(automargin=True, gridcolor=GRID, zeroline=False)
+    show_grid = st.session_state.get("section") != "dashboard"
+    fig.update_xaxes(automargin=True, showgrid=show_grid, gridcolor=GRID, zeroline=False)
+    fig.update_yaxes(automargin=True, showgrid=show_grid, gridcolor=GRID, zeroline=False)
     return fig
 
 
@@ -199,7 +200,7 @@ CHART_CONFIG = {
     "displaylogo": False,
     "scrollZoom": False,
     "doubleClick": False,
-    "modeBarButtonsToRemove": ["lasso2d", "select2d", "pan2d", "zoom2d"],
+    "modeBarButtonsToRemove": ["lasso2d", "select2d"],
 }
 
 
