@@ -1559,14 +1559,12 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
 
 def render_overview(summaries: dict, commerce: dict | None) -> None:
     del summaries, commerce
-    film = "data:video/mp4;base64," + base64.b64encode((ROOT / "assets" / "vd.mp4").read_bytes()).decode("ascii")
+    film = "data:image/webp;base64," + base64.b64encode((ROOT / "assets" / "vd.webp").read_bytes()).decode("ascii")
     st.markdown(
         f"""
         <section class="overview-hero">
           <h1>Delivery Performance</h1>
-          <video class="overview-film" autoplay muted loop playsinline aria-label="Veridi Logistics">
-            <source src="{film}" type="video/mp4">
-          </video>
+          <img class="overview-film" src="{film}" alt="Veridi Logistics">
         </section>
         <p class="page-sub">This page is the guide to the project. The delivery audit, the sales view, and the risk check each have their own section. The outputs below are the notebook, the slides, and the summary tables.</p>
         """,
