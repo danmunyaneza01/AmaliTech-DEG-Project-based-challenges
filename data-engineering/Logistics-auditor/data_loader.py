@@ -1,5 +1,6 @@
 """Load the audit summaries and the commerce aggregates behind the dashboard."""
 
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -304,6 +305,13 @@ def load_late_risk(data_dir: Path, output_dir: Path | None = None) -> dict:
 
     output_dir = output_dir or data_dir.parent / "outputs"
     orders_path = data_dir / "olist_orders_dataset.csv"
+    saved_risk = output_dir / "prediction_check.json"
+    if not orders_path.exists() and not (output_dir / "joined_orders.csv").exists():
+        if not saved_risk.exists():
+            raise FileNotFoundError("The Olist order file is not in this copy of the project.")
+        payload = json.loads(saved_risk.read_text(encoding="utf-8"))
+        payload["factors"] = pd.DataFrame(payload["factors"])
+        return payload
     if orders_path.exists():
         orders = pd.read_csv(
             orders_path,

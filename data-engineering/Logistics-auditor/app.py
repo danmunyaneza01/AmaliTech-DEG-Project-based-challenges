@@ -1850,15 +1850,18 @@ def main() -> None:
     page = st.session_state.section
     summaries = summaries_cached()
     commerce = None
-    commerce_error = ""
     try:
         commerce = commerce_cached()
-    except FileNotFoundError as exc:
-        commerce_error = str(exc)
+    except FileNotFoundError:
+        commerce = None
 
     if page == "dashboard":
         if commerce is None:
-            st.error(commerce_error or "The Olist CSVs in data/ are required for the commerce dashboard.")
+            st.markdown(
+                '<p class="page-sub">The order-level table is kept out of the public repository. These charts use the summary tables.</p>',
+                unsafe_allow_html=True,
+            )
+            render_delivery(summaries, None)
         else:
             render_dashboard(commerce, summaries)
     elif page == "predict":
