@@ -28,6 +28,8 @@ WARN = "#ff9332"
 ORANGE = "#ff5a00"
 INK = "#3e3d3a"
 MUTED = "#6f6c66"
+GRID = "#e5e7eb"
+
 STATUS_ORDER = ["On Time", "Late", "Super Late", "Not Delivered"]
 REVIEW_STATUS_ORDER = ["On Time", "Late", "Super Late"]
 DELAY_BIN_ORDER = [
@@ -57,7 +59,7 @@ st.set_page_config(
     page_title="Logistics Auditor",
     page_icon="L",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 
@@ -161,8 +163,9 @@ def apply_layout(fig: go.Figure) -> go.Figure:
         hoverlabel=dict(namelength=-1, align="left", font=dict(size=13, color=INK)),
         dragmode=False,
     )
-    fig.update_xaxes(automargin=True, showgrid=False, zeroline=False)
-    fig.update_yaxes(automargin=True, showgrid=False, zeroline=False)
+    show_grid = st.session_state.get("section") != "dashboard"
+    fig.update_xaxes(automargin=True, showgrid=show_grid, gridcolor=GRID, zeroline=False)
+    fig.update_yaxes(automargin=True, showgrid=show_grid, gridcolor=GRID, zeroline=False)
     return fig
 
 
@@ -317,30 +320,47 @@ def brand_logo() -> str:
     return "data:image/png;base64," + base64.b64encode(raw).decode("ascii")
 
 
+def toggle_nav() -> None:
+    st.session_state.nav_open = not st.session_state.nav_open
+
+
 def render_nav() -> None:
-    sections = (
-        ("overview", "Overview"),
-        ("delivery", "Delivery Performance"),
-        ("dashboard", "Dashboard"),
-        ("predict", "Prediction"),
-    )
-    with st.container(key="title_tabs"):
-        logo_col, *tab_cols = st.columns([1.15, 1, 1.45, 1, 1], gap="small")
-        with logo_col:
+    st.session_state.setdefault("nav_open", True)
+    if st.session_state.nav_open:
+        st.button(
+            "Hide",
+            key="nav_hide",
+            icon=":material/left_panel_close:",
+            on_click=toggle_nav,
+        )
+        sections = (
+            ("overview", "Overview"),
+            ("delivery", "Delivery Performance"),
+            ("dashboard", "Dashboard"),
+            ("predict", "Prediction"),
+        )
+        with st.sidebar:
             st.markdown(
                 f'<img class="brand-logo" src="{brand_logo()}" alt="Veridi Logistics">',
                 unsafe_allow_html=True,
             )
-        for column, (key, label) in zip(tab_cols, sections):
-            with column:
+            for key, label in sections:
+                active = st.session_state.section == key
                 st.button(
                     label,
                     key=f"nav_{key}",
-                    type="primary" if st.session_state.section == key else "secondary",
-                    width="stretch",
+                    type="primary" if active else "secondary",
+                    width="content",
                     on_click=choose_section,
                     args=(key,),
                 )
+        return
+    st.button(
+        "Menu",
+        key="nav_show",
+        icon=":material/left_panel_open:",
+        on_click=toggle_nav,
+    )
 
 
 def render_explanation() -> None:
