@@ -949,11 +949,10 @@ div[data-testid="stSelectbox"] label {
 }
 
 .overview-film {
-  width: 120px;
-  height: 120px;
+  width: 260px;
+  height: auto;
   flex: none;
-  border-radius: 24px;
-  object-fit: cover;
+  border-radius: 0;
   background: transparent;
 }
 
@@ -1185,9 +1184,9 @@ div[data-testid="stDataFrame"] {
   }
 
   .overview-film {
-    width: 84px;
-    height: 84px;
-    border-radius: 18px;
+    width: 180px;
+    height: auto;
+    border-radius: 0;
   }
 
   .overview-hero h1 {
