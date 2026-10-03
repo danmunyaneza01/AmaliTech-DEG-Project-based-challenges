@@ -184,11 +184,14 @@ section[data-testid="stSidebar"] > div,
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
 [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
   width: fit-content !important;
   max-width: 100%;
-  min-height: 32px;
-  height: auto;
-  padding: 6px 10px !important;
+  min-height: 36px;
+  height: 36px;
+  padding: 0 12px !important;
   justify-content: flex-start;
   background: transparent !important;
   color: #d7e2ee !important;
@@ -200,6 +203,11 @@ section[data-testid="stSidebar"] > div,
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] p,
 [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] p {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px;
+  margin: 0;
   font-family: var(--fontFamilyPoppins);
   font-size: 13px;
   font-weight: 600;
@@ -209,18 +217,23 @@ section[data-testid="stSidebar"] > div,
 }
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #ffffff !important;
-  box-shadow: inset 3px 0 0 var(--primary) !important;
+  background: #ffffff !important;
+  color: var(--secondary-1000) !important;
+  box-shadow: none !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stBaseButton-primary"] p {
+  color: var(--secondary-1000) !important;
 }
 
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
 }
 
 [data-testid="stSidebar"] button p {
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 8px;
 }
@@ -230,9 +243,10 @@ section[data-testid="stSidebar"] > div,
 .st-key-nav_dashboard button p::before,
 .st-key-nav_predict button p::before {
   content: "";
-  width: 14px;
-  height: 14px;
-  background: currentColor;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background: var(--primary);
   -webkit-mask: var(--glyph) center / contain no-repeat;
   mask: var(--glyph) center / contain no-repeat;
 }
