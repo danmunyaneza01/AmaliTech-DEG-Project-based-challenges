@@ -1776,22 +1776,8 @@ def render_delivery(summaries: dict, commerce: dict | None) -> None:
 
 def render_prediction(risk: dict) -> None:
     st.markdown('<h1 class="page-title"><i class="mark trend"></i>Prediction</h1>', unsafe_allow_html=True)
-    factors = risk["factors"]
-    northeast = factors.loc[factors["factor"].str.startswith("Northeast"), "odds"]
-    northeast_odds = float(northeast.iloc[0]) if len(northeast) else float("nan")
     st.markdown(
-        f"""
-        <div class="recommend-grid">
-          <section class="home-card">
-            <h2><i class="mark target"></i>What we are predicting</h2>
-            <p>Logistic regression estimates the chance that a delivered order misses the promised day. The only inputs are the customer’s region and the number of days Veridi promised, both known when the order is placed. It does not forecast sales. Seller handling time and the carrier’s road time are unknown that day, so they are not used. Orders placed before 2018 teach the pattern. January through August 2018 is the check, and those orders were not used to fit it.</p>
-          </section>
-          <section class="home-card finding">
-            <h2><i class="mark flag"></i>The outcome</h2>
-            <p>On the 2018 check, {pct(risk["test_late_rate"])} of deliveries were late. The riskiest tenth were late {pct(risk["precision"])} of the time, {risk["lift"]:.1f} times the overall rate, and that tenth caught {pct(risk["recall"])} of the late orders. The score separates late from on time only slightly better than remembering each region’s old late rate ({risk["auc"]:.2f} versus {risk["baseline_auc"]:.2f}). At the same promised window, a Northeast order is {northeast_odds:.1f} times as likely to be late as a Southeast order.</p>
-          </section>
-        </div>
-        """,
+        '<p class="page-sub">Will this order miss its date? The check uses only the region and the promised lead time, both known when the customer orders.</p>',
         unsafe_allow_html=True,
     )
     kpis = [
@@ -1805,6 +1791,46 @@ def render_prediction(risk: dict) -> None:
         for mark, label, value, note in kpis
     )
     st.markdown(f'<div class="kpis">{cards}</div>', unsafe_allow_html=True)
+
+    deciles = risk.get("deciles")
+    if deciles is not None and len(deciles):
+        st.markdown(
+            '<h2 class="section-label"><i class="mark trend"></i>Does a higher score mean a later miss?</h2>',
+            unsafe_allow_html=True,
+        )
+        with st.container(border=True):
+            card_heading(
+                "2018 orders grouped by the predicted chance of being late",
+                "Ten equal groups, from the lowest score to the highest. The bars are what actually happened. The line is the chance the model gave that group. The dashed line is every 2018 delivery.",
+            )
+            labels = [str(int(value)) for value in deciles["decile"]]
+            fig = go.Figure()
+            fig.add_bar(
+                name="Actual late rate",
+                x=labels,
+                y=deciles["late_rate"],
+                marker_color=DANGER,
+                text=[pct(value) for value in deciles["late_rate"]],
+                textposition="outside",
+            )
+            fig.add_scatter(
+                name="Average predicted chance",
+                x=labels,
+                y=deciles["mean_risk"],
+                mode="lines+markers",
+                line=dict(color=ACCENT, width=2),
+            )
+            apply_layout(fig)
+            fig.add_hline(y=risk["test_late_rate"], line_dash="dash", line_color=INK)
+            top = max(float(deciles["late_rate"].max()), float(deciles["mean_risk"].max()), float(risk["test_late_rate"]))
+            fig.update_layout(
+                yaxis_title="Late rate",
+                yaxis_tickformat=".0%",
+                yaxis_range=[0, max(top * 1.35, 0.2)],
+                xaxis_title="Predicted risk group, lowest to highest",
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
+            )
+            show(fig)
 
     left, right = st.columns(2)
     with left:
@@ -1835,8 +1861,23 @@ def render_prediction(risk: dict) -> None:
             fig.update_layout(showlegend=False, xaxis_title="Odds versus the reference")
             show(fig)
 
+    factors = risk["factors"]
+    northeast = factors.loc[factors["factor"].str.startswith("Northeast"), "odds"]
+    northeast_odds = float(northeast.iloc[0]) if len(northeast) else float("nan")
     st.markdown(
-        '<p class="foot">The score is a check on this history, not a live promise engine.</p>',
+        f"""
+        <div class="recommend-grid">
+          <section class="home-card">
+            <h2><i class="mark target"></i>What we are predicting</h2>
+            <p>Logistic regression estimates the chance that a delivered order misses the promised day. The only inputs are the customer’s region and the number of days Veridi promised, both known when the order is placed. It does not forecast sales. Seller handling time and the carrier’s road time are unknown that day, so they are not used. Orders placed before 2018 teach the pattern. January through August 2018 is the check, and those orders were not used to fit it.</p>
+          </section>
+          <section class="home-card finding">
+            <h2><i class="mark flag"></i>The outcome</h2>
+            <p>On the 2018 check, {pct(risk["test_late_rate"])} of deliveries were late. The riskiest tenth were late {pct(risk["precision"])} of the time, {risk["lift"]:.1f} times the overall rate, and that tenth caught {pct(risk["recall"])} of the late orders. The score separates late from on time only slightly better than remembering each region’s old late rate ({risk["auc"]:.2f} versus {risk["baseline_auc"]:.2f}). At the same promised window, a Northeast order is {northeast_odds:.1f} times as likely to be late as a Southeast order.</p>
+          </section>
+        </div>
+        <p class="foot">The score is a check on this history, not a live promise engine.</p>
+        """,
         unsafe_allow_html=True,
     )
 
