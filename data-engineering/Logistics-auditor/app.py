@@ -432,6 +432,12 @@ def analysis_tables_zip() -> bytes:
 
 
 @st.cache_data
+def joined_dataset() -> bytes:
+    """One row per order after customers and reviews are joined."""
+    return (OUTPUT_DIR / "joined_orders.csv").read_bytes()
+
+
+@st.cache_data
 def source_archive() -> bytes:
     """The public Olist CSV archive the audit is built from."""
     return (DATA_DIR / "olist.zip").read_bytes()
@@ -486,13 +492,15 @@ def render_flow() -> None:
                 </section>
               </div>
               <h3 class="foot-download-title"><i class="mark file"></i>Download the data this audit uses</h3>
-              <p class="foot-lead">Analysis tables are the six summaries on this page. The source archive is the raw Olist CSV set they were built from: orders, customers, reviews, items, products, payments, locations, and category names.</p>
+              <p class="foot-lead">Analysis tables are the six summaries on this page. The joined dataset is one row per order: the order, the customer state, and one review score.</p>
             </section>
             """,
             unsafe_allow_html=True,
         )
-        tables, source = st.columns(2, gap="small")
-        with tables:
+        column_count = 3 if (DATA_DIR / "olist.zip").exists() else 2
+        columns = st.columns(column_count, gap="small")
+        index = 0
+        with columns[index]:
             st.download_button(
                 "Analysis tables",
                 data=analysis_tables_zip(),
@@ -504,8 +512,23 @@ def render_flow() -> None:
                 help="Delivery status, regions, states, reviews by status, reviews by delay, and categories.",
                 key="download_analysis_tables",
             )
-        with source:
-            if (DATA_DIR / "olist.zip").exists():
+        index += 1
+        if (OUTPUT_DIR / "joined_orders.csv").exists():
+            with columns[index]:
+                st.download_button(
+                    "Joined dataset",
+                    data=joined_dataset(),
+                    file_name="joined_orders.csv",
+                    mime="text/csv",
+                    type="primary",
+                    icon=":material/download:",
+                    width="stretch",
+                    help="99,441 orders. Customers and one review score are already attached.",
+                    key="download_joined_dataset",
+                )
+            index += 1
+        if (DATA_DIR / "olist.zip").exists():
+            with columns[index]:
                 st.download_button(
                     "Source CSV archive",
                     data=source_archive(),
