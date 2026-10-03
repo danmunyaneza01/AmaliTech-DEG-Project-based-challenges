@@ -1017,9 +1017,43 @@ div[data-testid="stSelectbox"] label {
   color: var(--secondary-1000);
 }
 
-.home-card a {
-  color: var(--secondary-800);
-  font-weight: 600;
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 4px 0 8px;
+}
+
+.guide-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 4px 0 14px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.guide-steps li {
+  counter-increment: step;
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 14px 14px 14px 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--secondary-1000);
+}
+
+.guide-steps li::before {
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--fontFamilyPoppins);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--primary);
 }
 
 .kpis {
@@ -1248,6 +1282,8 @@ div[data-testid="stDataFrame"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .guide-grid,
+  .guide-steps,
   .overview-top,
   .method-grid,
   .recommend-grid {
