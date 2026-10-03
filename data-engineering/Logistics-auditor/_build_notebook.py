@@ -55,7 +55,7 @@ DATA_DIR = Path("data")
 OUTPUT_DIR = Path("outputs")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-sns.set_theme(style="whitegrid", context="notebook")
+sns.set_theme(style="white", context="notebook")
 pd.set_option("display.max_columns", 40)
 pd.set_option("display.float_format", lambda v: f"{v:,.2f}")
 
