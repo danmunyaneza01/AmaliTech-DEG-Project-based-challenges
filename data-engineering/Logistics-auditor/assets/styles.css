@@ -375,10 +375,6 @@ section[data-testid="stSidebar"] > div,
   color: var(--secondary-1000);
 }
 
-.dash-brief h2 .mark {
-  background: var(--primary);
-}
-
 .dash-brief p {
   margin: 0;
   font-size: 15px;
@@ -401,10 +397,6 @@ section[data-testid="stSidebar"] > div,
   font-size: 13px;
   font-weight: 600;
   color: var(--secondary-1000);
-}
-
-.filter-kicker .mark {
-  background: var(--secondary-1000);
 }
 
 .st-key-dash_filters [data-testid="stHorizontalBlock"] {
@@ -543,13 +535,6 @@ div[data-testid="stSelectbox"] label {
   justify-content: flex-start;
   margin: 28px 0 8px;
   font-size: 16px;
-}
-
-.flow-band h2 .mark,
-.page-foot h2 .mark,
-.page-foot h3 .mark,
-.foot-download-title .mark {
-  background: var(--primary-300);
 }
 
 .foot-lead {
@@ -720,40 +705,6 @@ div[data-testid="stSelectbox"] label {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.mark {
-  width: 20px;
-  height: 20px;
-  flex: none;
-  background: var(--secondary-1000);
-  -webkit-mask: var(--glyph) center / contain no-repeat;
-  mask: var(--glyph) center / contain no-repeat;
-}
-
-.mark.box { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 7l9-4 9 4-9 4-9-4z'/><path d='M3 7v10l9 4 9-4V7'/><path d='M12 11v10'/></svg>"); }
-.mark.check { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M8 12l3 3 5-6'/></svg>"); }
-.mark.clock { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v6l4 2'/></svg>"); }
-.mark.calendar { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><rect x='4' y='5' width='16' height='15' rx='2'/><path d='M4 9h16M8 3v4M16 3v4'/></svg>"); }
-.mark.pin { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z'/><circle cx='12' cy='10' r='2.2'/></svg>"); }
-.mark.star { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M12 3l2.4 5.2 5.6.6-4.2 3.8 1.2 5.5L12 15.8 6.9 18.1 8.1 12.6 3.9 8.8l5.6-.6z'/></svg>"); }
-.mark.chart { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M4 19h16'/><path d='M7 16V10'/><path d='M12 16V6'/><path d='M17 16v-4'/></svg>"); }
-.mark.alert { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 4l9 16H3z'/><path d='M12 10v4'/><path d='M12 17h.01'/></svg>"); }
-.mark.route { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='6' cy='6' r='2.2'/><circle cx='18' cy='18' r='2.2'/><path d='M8 7c4 0 4 10 8 10'/></svg>"); }
-.mark.shield { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M12 3l8 3v6c0 5-3.4 7.8-8 9-4.6-1.2-8-4-8-9V6z'/></svg>"); }
-.mark.flag { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 21V4'/><path d='M6 5h11l-2 4 2 4H6'/></svg>"); }
-.mark.target { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><circle cx='12' cy='12' r='8'/><circle cx='12' cy='12' r='3'/><path d='M12 2v3M12 19v3M2 12h3M19 12h3'/></svg>"); }
-.mark.layers { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M12 3l9 5-9 5-9-5z'/><path d='M3 12l9 5 9-5'/><path d='M3 16l9 5 9-5'/></svg>"); }
-.mark.trend { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 16l5-5 4 4 7-8'/><path d='M14 7h6v6'/></svg>"); }
-.mark.file { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M7 3h7l5 5v13H7z'/><path d='M14 3v5h5'/></svg>"); }
-.mark.users { --glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='9' cy='8' r='3'/><path d='M3.5 19a5.5 5.5 0 0 1 11 0'/><circle cx='17' cy='9' r='2.2'/><path d='M16 19a4.5 4.5 0 0 1 4.5-4'/></svg>"); }
-
-.kpi .mark {
-  background: var(--kpi-tone, var(--primary));
-}
-
-.home-card h2 .mark {
-  background: var(--primary);
 }
 
 .scene {
@@ -994,12 +945,6 @@ div[data-testid="stSelectbox"] label {
   border-bottom: 3px solid var(--primary);
 }
 
-.page-title .mark {
-  background: var(--primary);
-  width: 26px;
-  height: 26px;
-}
-
 .page-sub {
   color: var(--mu);
   font-size: 13px;
@@ -1127,13 +1072,6 @@ div[data-testid="stSelectbox"] label {
 
 .dash-kpis .kpi:hover {
   transform: none;
-}
-
-.dash-kpis .kpi .mark {
-  display: block;
-  width: 18px;
-  height: 18px;
-  background: var(--kpi-tone);
 }
 
 .dash-kpis .kpi-icon {

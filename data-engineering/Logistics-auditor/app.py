@@ -392,20 +392,20 @@ def render_explanation() -> None:
         </div>
         <div class="method-grid">
           <section class="home-card">
-            <h2><i class="mark box"></i>What this audit is</h2>
+            <h2>What this audit is</h2>
             <p>A delivery performance audit checks one promise: did the package arrive on the day the customer was told, or after it? It is a review of that promise, not a guess about next month’s sales.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark alert"></i>Why Veridi needs it</h2>
+            <h2>Why Veridi needs it</h2>
             <p>Reviews got worse. The open question is whether the date on the order is too hopeful in a few parts of Brazil, or across the whole country.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark clock"></i>What “performance” means</h2>
+            <h2>What “performance” means</h2>
             <p>Performance here is the promised day, not the length of the road by itself. A long trip can still be on time if the date left enough room. A short trip can still be late if the date was too soon.</p>
           </section>
         </div>
         <section class="callout accent">
-          <h2><i class="mark calendar"></i>How a day becomes “late”</h2>
+          <h2>How a day becomes “late”</h2>
           <p>The promised date is the day the customer was given. The actual date is the day the package arrived. Days late are the actual date minus the promised date.</p>
           <p class="audit-example">If Veridi promises that a package will arrive on 10 June, and it arrives on 13 June, the package was 3 days late.</p>
           <p>On time means it arrived on that day or earlier. Most packages here arrive early. Late means it arrived after that day. Regions matter because a calm national average can hide one part of the country. The stars matter because they sit on the same order, so a missed day and a lower score can be read together. A lower score next to a late package is a pattern. It is not, by itself, proof that the delay caused the review.</p>
@@ -452,7 +452,7 @@ def render_flow() -> None:
         st.markdown(
             """
             <section class="page-foot">
-              <h2><i class="mark route"></i>From raw CSV to the answer</h2>
+              <h2>From raw CSV to the answer</h2>
               <p class="foot-lead">The files start separate. They are cleaned, joined to one row per order, and compared with the promised day. That comparison is the insight on this page.</p>
               <div class="flow">
                 <article class="flow-step">
@@ -483,19 +483,19 @@ def render_flow() -> None:
               </div>
               <div class="foot-grid">
                 <section>
-                  <h3><i class="mark check"></i>Cleaned</h3>
+                  <h3>Cleaned</h3>
                   <p>99,441 orders, and no order id is repeated. 2,971 orders have no arrival day. They stay in the file and are left out of the 6.8% late rate. 547 orders had more than one review, so those scores were averaged first. Every score is from 1 to 5. No package is recorded as arriving before it was bought.</p>
                 </section>
                 <section>
-                  <h3><i class="mark layers"></i>Joined</h3>
+                  <h3>Joined</h3>
                   <p>Orders are the hub. Customers join on customer id, one state per order. Reviews join on order id only after they are one score. Item rows stay beside the order. The English category is the most expensive item, so a basket of several products is still one order.</p>
                 </section>
                 <section>
-                  <h3><i class="mark file"></i>Safe to reuse</h3>
+                  <h3>Safe to reuse</h3>
                   <p>One row is one promised delivery. Late means the arrival calendar day is after the promised day. Super late means more than five days after. The five regions are groups of the customer’s state. Payments and map points stay in their own files, so they cannot count the same order twice.</p>
                 </section>
               </div>
-              <h3 class="foot-download-title"><i class="mark file"></i>Download the data this audit uses</h3>
+              <h3 class="foot-download-title">Download the data this audit uses</h3>
               <p class="foot-lead">Analysis tables are the six summaries on this page. The joined dataset is one row per order: the order, the customer state, and one review score.</p>
             </section>
             """,
@@ -553,18 +553,18 @@ def render_flow() -> None:
 def render_method() -> None:
     st.markdown(
         """
-        <h2 class="section-label"><i class="mark shield"></i>What this audit cannot prove</h2>
+        <h2 class="section-label">What this audit cannot prove</h2>
         <div class="method-grid">
           <section class="home-card">
-            <h2><i class="mark shield"></i>Limits</h2>
+            <h2>Limits</h2>
             <p>This is the Olist public history. Purchases run from 4 September 2016 to 17 October 2018. It is not a live feed. The 6.8% late rate counts packages that arrived. The 2,971 orders with no arrival are left out of that rate, and they are not called late.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark pin"></i>Cause</h2>
+            <h2>Cause</h2>
             <p>The audit shows where the promised day is missed, and that the extra time is on the road after the carrier has the package. It does not show why the road is slow. Carrier contracts, routes, staffing, and season are not in this table.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark file"></i>What you can open</h2>
+            <h2>What you can open</h2>
             <p>The notebook is the working record. This page is the audit. Dashboard is sales and payments. Prediction flags orders that are more likely to miss the date. The notebook, the chart export, and the slides are linked from Overview.</p>
           </section>
         </div>
@@ -597,7 +597,7 @@ def render_scenario(summaries: dict, commerce: dict | None, national: dict) -> N
     regions = summaries["region_performance"].sort_values("late_rate", ascending=False)
     st.markdown(
         """
-        <h2 class="section-label"><i class="mark route"></i>The scenario</h2>
+        <h2 class="section-label">The scenario</h2>
         <p class="audit-note">Reviews got worse. The suspicion is that the date on the order is wildly too soon, and that this is true across Brazil. These pictures use the same rules as the rest of the page. They do not replace the tables below.</p>
         """,
         unsafe_allow_html=True,
@@ -685,18 +685,18 @@ def render_scenario(summaries: dict, commerce: dict | None, national: dict) -> N
 def render_data_notes() -> None:
     st.markdown(
         """
-        <h2 class="section-label"><i class="mark layers"></i>The data, and what was kept out</h2>
+        <h2 class="section-label">The data, and what was kept out</h2>
         <div class="method-grid">
           <section class="home-card">
-            <h2><i class="mark layers"></i>What each field means</h2>
+            <h2>What each field means</h2>
             <p>An order id is one package’s promise. The customer state is where it was delivered, grouped into five regions. The estimated date is the day the customer was given. The actual date is the day it arrived. The review score is the stars, from 1 to 5.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark check"></i>99,441 orders, each once</h2>
+            <h2>99,441 orders, each once</h2>
             <p>There are no duplicate order ids. Purchases run from 4 September 2016 to 17 October 2018. Every order has an estimated date. No package is recorded as arriving before it was bought. Every review score is between 1 and 5.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark alert"></i>2,971 orders are not in the late rate</h2>
+            <h2>2,971 orders are not in the late rate</h2>
             <p>They were canceled, unavailable, still moving, or have no arrival day. Eight are marked delivered but have no arrival date. They stay in the file and are not called late. 547 orders had more than one review, out of 99,224 review rows and 98,673 orders. Those scores were averaged so the order is counted once.</p>
           </section>
         </div>
@@ -713,9 +713,9 @@ def render_audit(summaries: dict, commerce: dict | None) -> None:
     by_status = summaries["review_by_status"]
     by_bin = summaries["review_by_delay_bin"]
     national = national_figures(status, by_status)
-    st.markdown('<h2 class="section-label"><i class="mark chart"></i>The proof</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">The proof</h2>', unsafe_allow_html=True)
     render_scenario(summaries, commerce, national)
-    st.markdown('<h2 class="section-label"><i class="mark chart"></i>Company-wide performance</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">Company-wide performance</h2>', unsafe_allow_html=True)
 
     on_time = 1 - national["late_rate"]
     kpis = [
@@ -727,20 +727,20 @@ def render_audit(summaries: dict, commerce: dict | None) -> None:
         ("star", "On-time review", f"{national['on_time_score']:.2f}", "Stars out of 5"),
     ]
     cards = "".join(
-        f'<div class="kpi"><i class="mark {mark}"></i><span>{escape(label)}</span><b>{escape(value)}</b><i>{escape(note)}</i></div>'
-        for mark, label, value, note in kpis
+        f'<div class="kpi"><span>{escape(label)}</span><b>{escape(value)}</b><i>{escape(note)}</i></div>'
+        for _mark, label, value, note in kpis
     )
     st.markdown(f'<div class="kpis">{cards}</div>', unsafe_allow_html=True)
     st.markdown(
         """
         <p class="audit-note">On time means the package arrived on the promised calendar day or before it. Late means after that day. Of the late packages, those more than five days late are called super late. The median is used beside the average because a few very long delays pull the average up. The average delay among late packages is 10.6 days. The median is 7.</p>
-        <h2 class="section-label"><i class="mark clock"></i>How late is grouped</h2>
+        <h2 class="section-label">How late is grouped</h2>
         <p class="audit-note">The groups follow the point where the stars break, not a 1–2 day and 3–5 day split. Stars stay near 4 while the package is early. They fall to 2.99 when it is 1 to 5 days late, and to about 1.7 once the delay passes 5 days. Early packages are still shown in finer bands so a long trip that arrives early is not called a failure.</p>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown('<h2 class="section-label"><i class="mark pin"></i>Regions, not one national average</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">Regions, not one national average</h2>', unsafe_allow_html=True)
     delay = {
         "Northeast": (12.4, 8, 166),
         "North": (13.5, 7, 165),
@@ -997,7 +997,7 @@ def render_audit(summaries: dict, commerce: dict | None) -> None:
                 )
                 show(fig)
 
-    st.markdown('<h2 class="section-label"><i class="mark trend"></i>Over time</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">Over time</h2>', unsafe_allow_html=True)
     st.markdown(
         '<p class="audit-note">Purchases run from September 2016 through October 2018. September 2016 and December 2016 have one delivered order each, so the monthly view starts in January 2017 and ends in August 2018. The late rate is 12.4% in November 2017, 14.1% in February 2018, and 19.0% in March 2018, then 4.5% in April 2018. The share of 1- and 2-star reviews moves with it, from 16.5% to 21.1% and back to 11.7%. The spike rises and falls. It is not a single bad month, and it is not a straight climb. When the two lines move together, the missed day and the weak review show up in the same months. That is a pattern, not a cause.</p>',
         unsafe_allow_html=True,
@@ -1017,7 +1017,7 @@ def render_audit(summaries: dict, commerce: dict | None) -> None:
 
     st.markdown(
         """
-        <h2 class="section-label"><i class="mark alert"></i>Unusual delays</h2>
+        <h2 class="section-label">Unusual delays</h2>
         <section class="callout accent">
           <p>The median late package is 7 days late. 2,299 packages are 10 or more days late, and the longest is 188 days. Those rows were kept. They may be real failures or a wrong date. They pull the average delay from 7 days up to 10.6. They do not create the regional result. The late rate counts a one-day miss and a 188-day miss as one miss each, and the Northeast is still about twice the Southeast.</p>
         </section>
@@ -1038,11 +1038,11 @@ def render_answer(summaries: dict) -> None:
     sao = states.loc["SP"]
     st.markdown(
         f"""
-        <h2 class="section-label"><i class="mark file"></i>Executive summary</h2>
+        <h2 class="section-label">Executive summary</h2>
         <section class="callout accent">
           <p>Of {delivered:,} packages that arrived, {pct(late / delivered)} missed the promised day. The typical package still arrived 12 days early, so the promised date is not too soon for Brazil as a whole. It is too soon in specific places. The Northeast is late {pct(northeast["late_rate"])} of the time, against {pct(southeast["late_rate"])} in the Southeast. Rio de Janeiro is late {pct(rio["late_rate"])} of the time on {int(rio["delivered_orders"]):,} deliveries. São Paulo is late {pct(sao["late_rate"])} on {int(sao["delivered_orders"]):,}. Among orders with a review, a late package is paired with a 1- or 2-star review 62.4% of the time, against 9.2% when the package is on time. Even so, 67.5% of those weak reviews are on-time orders, because most orders are on time. The problem is regional, not nationwide. The over-promising hypothesis holds in the Northeast and in Rio, where the trip is longer and the cushion was not. It does not hold for the typical order.</p>
         </section>
-        <h2 class="section-label"><i class="mark route"></i>The answer</h2>
+        <h2 class="section-label">The answer</h2>
         <section class="callout accent">
           <p>The audit identifies where the performance problem occurs. The extra days are on the road, after the carrier has the package, not in the shop’s packing time. Additional operational data is required to establish the underlying cause. Carrier performance, route, distance, and capacity are not proven by these dates.</p>
           <p><b>The question was whether specific regions are failing, or the whole country.</b> The evidence says specific places. The Northeast misses about twice as often as the Southeast. Rio is a large miss inside an otherwise steadier Southeast. The North, given a wider promised day, misses less often on a long road. São Paulo, the largest state, stays mostly on time. The date shown to the customer is the lever this history can support.</p>
@@ -1064,7 +1064,7 @@ def render_actions(summaries: dict) -> None:
     sao = states.loc["SP"]
     st.markdown(
         f"""
-        <h2 class="section-label"><i class="mark check"></i>Key findings</h2>
+        <h2 class="section-label">Key findings</h2>
         <section class="callout accent">
           <ol>
             <li>Of {delivered:,} packages that arrived, {late:,} missed the promised day. That is {pct(late / delivered)}. {int(status.loc["Super Late", "orders"]):,} of those misses were more than five days late.</li>
@@ -1075,26 +1075,26 @@ def render_actions(summaries: dict) -> None:
             <li>The promised day looks tight where the road is long and the cushion was not widened. The Northeast trip takes about {northeast["avg_actual_lead_days"]:.0f} days with about {northeast["avg_days_difference"]:.0f} days of cushion. The Southeast trip takes about {southeast["avg_actual_lead_days"]:.0f} days with about {southeast["avg_days_difference"]:.0f} days of cushion.</li>
           </ol>
         </section>
-        <h2 class="section-label"><i class="mark flag"></i>What to do first</h2>
+        <h2 class="section-label">What to do first</h2>
         <div class="recommend-grid">
           <section class="home-card">
-            <h2><i class="mark pin"></i>1. A later day in the Northeast and in Rio</h2>
+            <h2>1. A later day in the Northeast and in Rio</h2>
             <p>The Northeast is late {pct(northeast["late_rate"])} on {int(northeast["delivered_orders"]):,} deliveries, with about {northeast["avg_days_difference"]:.0f} days of cushion on a {northeast["avg_actual_lead_days"]:.0f}-day trip. Rio is late {pct(rio["late_rate"])} on {int(rio["delivered_orders"]):,}. The North was given a wider day and misses less often on a long road. The impact is those misses, not a promise to cut the rate by a set amount.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark route"></i>2. A later day when the package leaves the state</h2>
+            <h2>2. A later day when the package leaves the state</h2>
             <p>Same-state deliveries are late 4.5% of the time (34,690). Cross-state deliveries are late 8.0% of the time (61,780). The estimate can treat a package that stays in the seller’s state differently from one that crosses a line. This is a pattern in the dates, not proof of why the road is slower.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark alert"></i>3. Do not rank small states by rate alone</h2>
+            <h2>3. Do not rank small states by rate alone</h2>
             <p>Alagoas is 21.4% late on 397 deliveries. Roraima, Acre, and Amapá have fewer than 100. Rio ranks first when late parcels are weighed by the share of weak reviews. São Paulo ranks second because the count of misses is large, even though the rate is 4.5%.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark star"></i>4. The date will not clear every weak review</h2>
+            <h2>4. The date will not clear every weak review</h2>
             <p>Of 12,236 reviews scored 1 or 2, 8,257 (67.5%) are on-time orders and 3,979 (32.5%) are late. A later promised day addresses the late share. The on-time share needs a separate look at product, seller, and price. This file does not show which of those is responsible.</p>
           </section>
         </div>
-        <h2 class="section-label"><i class="mark alert"></i>What would change the answer</h2>
+        <h2 class="section-label">What would change the answer</h2>
         <section class="callout accent">
           <ul>
             <li>If the Northeast late rate sat near the Southeast’s {pct(southeast["late_rate"])}, this would not be a regional miss.</li>
@@ -1148,12 +1148,12 @@ def money(value: float) -> str:
 
 
 def render_dashboard(commerce: dict | None, summaries: dict) -> None:
-    st.markdown('<h1 class="page-title"><i class="mark chart"></i>Dashboard</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="page-title">Dashboard</h1>', unsafe_allow_html=True)
     with st.container(border=True, key="dash_panel"):
         brief_slot = st.empty()
         with st.container(key="dash_filters"):
             st.markdown(
-                '<p class="filter-kicker"><i class="mark layers"></i>Narrow this selection</p>',
+                '<p class="filter-kicker">Narrow this selection</p>',
                 unsafe_allow_html=True,
             )
             region_col, year_col, delivery_col = st.columns(3, gap="small")
@@ -1219,7 +1219,7 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
     brief_slot.markdown(
         f"""
         <div class="dash-brief">
-          <h2><i class="mark flag"></i>Dashboard brief</h2>
+          <h2>Dashboard brief</h2>
           <p>This selection is {money(revenue)} in product sales across {orders:,} orders. {score_line}{late_line} {place_line} A later promised day belongs where the miss is concentrated, not on every order in the selection.</p>
         </div>
         """,
@@ -1237,12 +1237,12 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
         ("route", "tone-deep", "Repeat customers", pct(repeat_rate) if repeat_rate == repeat_rate else "—", "More than one order in this selection"),
     ]
     cards = "".join(
-        f'<div class="kpi {tone}"><span class="kpi-icon"><i class="mark {mark}"></i></span><span>{escape(label)}</span><b>{escape(value)}</b><i>{escape(note)}</i></div>'
-        for mark, tone, label, value, note in kpis
+        f'<div class="kpi {tone}"><span>{escape(label)}</span><b>{escape(value)}</b><i>{escape(note)}</i></div>'
+        for _mark, tone, label, value, note in kpis
     )
     st.markdown(f'<div class="kpis dash-kpis">{cards}</div>', unsafe_allow_html=True)
 
-    st.markdown('<h2 class="section-label"><i class="mark chart"></i>Where the sales are, and where the date fails</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">Where the sales are, and where the date fails</h2>', unsafe_allow_html=True)
     left, right = st.columns(2)
     with left:
         with st.container(border=True):
@@ -1300,7 +1300,7 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
             fig.update_layout(showlegend=False, xaxis_tickformat=".0%", xaxis_title="Late rate", xaxis_range=[0, max(float(states["late_rate"].max()) * 1.55, 0.2)])
             show(fig)
 
-    st.markdown('<h2 class="section-label"><i class="mark clock"></i>How long the trip takes, and what the customer scored</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">How long the trip takes, and what the customer scored</h2>', unsafe_allow_html=True)
     left, right = st.columns(2)
     with left:
         with st.container(border=True):
@@ -1400,7 +1400,7 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
             )
             show(fig)
 
-    st.markdown('<h2 class="section-label"><i class="mark trend"></i>Whether the miss landed in a busy month</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">Whether the miss landed in a busy month</h2>', unsafe_allow_html=True)
     monthly = pack["monthly"]
     with st.container(border=True):
         card_heading(
@@ -1435,7 +1435,7 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
             fig.update_yaxes(tickformat=".0%", title="Share of orders")
             show(fig)
 
-    st.markdown('<h2 class="section-label"><i class="mark box"></i>Which products to watch</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">Which products to watch</h2>', unsafe_allow_html=True)
     left, right = st.columns(2)
     with left:
         with st.container(border=True):
@@ -1480,7 +1480,7 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
                 fig.update_layout(showlegend=False, xaxis_tickformat=".0%", xaxis_title="Late rate", xaxis_range=[0, max(top * 1.55, 0.2)])
                 show(fig)
 
-    st.markdown('<h2 class="section-label"><i class="mark star"></i>What the customer scored</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">What the customer scored</h2>', unsafe_allow_html=True)
     left, right = st.columns(2)
     with left:
         with st.container(border=True):
@@ -1523,7 +1523,7 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
             fig.update_layout(showlegend=False, yaxis_range=[0, 5.6], yaxis_title="Average review")
             show(fig)
 
-    st.markdown('<h2 class="section-label"><i class="mark file"></i>How the order was paid</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-label">How the order was paid</h2>', unsafe_allow_html=True)
     pays = pack["pays"]
     pay_rate = pack["pay_rate"]
     left, right = st.columns(2)
@@ -1595,26 +1595,26 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
           <h2>Business question</h2>
           <p><b>Are delivery performance problems concentrated in specific regions, or are they widespread across the market?</b></p>
         </section>
-        <h2 class="section-label"><i class="mark chart"></i>What this analysis measures</h2>
+        <h2 class="section-label">What this analysis measures</h2>
         <div class="guide-grid">
           <section class="home-card">
-            <h2><i class="mark check"></i>Delivery performance</h2>
+            <h2>Delivery performance</h2>
             <p>Measures whether orders arrive on time or later than the estimated delivery date.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark clock"></i>Delivery delay</h2>
+            <h2>Delivery delay</h2>
             <p>Measures the number of days between the promised delivery date and the actual customer delivery date.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark pin"></i>Regional performance</h2>
+            <h2>Regional performance</h2>
             <p>Compares late-delivery rates across customer states to identify geographic differences in delivery performance.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark star"></i>Customer experience</h2>
+            <h2>Customer experience</h2>
             <p>Examines whether customers who experience delivery delays tend to give lower review scores.</p>
           </section>
         </div>
-        <h2 class="section-label"><i class="mark route"></i>How to read this dashboard</h2>
+        <h2 class="section-label">How to read this dashboard</h2>
         <section class="callout accent">
           <ul>
             <li>Monitor overall delivery performance.</li>
@@ -1624,26 +1624,26 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
             <li>Explore whether certain product categories experience greater delivery challenges.</li>
           </ul>
         </section>
-        <h2 class="section-label"><i class="mark file"></i>Data</h2>
+        <h2 class="section-label">Data</h2>
         <section class="callout accent">
           <p>This analysis uses the <b>Olist Brazilian E-Commerce Dataset</b>, a real-world e-commerce dataset containing order, customer, product, and customer review information.</p>
         </section>
-        <h2 class="section-label"><i class="mark calendar"></i>Delivery status</h2>
+        <h2 class="section-label">Delivery status</h2>
         <div class="method-grid">
           <section class="home-card">
-            <h2><i class="mark check"></i>On time</h2>
+            <h2>On time</h2>
             <p>Delivered on or before the estimated delivery date.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark alert"></i>Late</h2>
+            <h2>Late</h2>
             <p>Delivered after the estimated delivery date.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark clock"></i>Super late</h2>
+            <h2>Super late</h2>
             <p>Delivered more than 5 days after the estimated delivery date.</p>
           </section>
         </div>
-        <h2 class="section-label"><i class="mark layers"></i>Analytical approach</h2>
+        <h2 class="section-label">Analytical approach</h2>
         <ol class="guide-steps">
           <li><b>Orders, customers, reviews, and products</b></li>
           <li><b>Data cleaning and validation</b></li>
@@ -1656,7 +1656,7 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
           <h2>Purpose</h2>
           <p>The goal is not only to identify late deliveries, but to understand <b>where delivery performance is weakest and how delivery delays relate to customer experience</b>, providing evidence for further operational investigation.</p>
         </section>
-        <h2 class="section-label"><i class="mark route"></i>Where to go next</h2>
+        <h2 class="section-label">Where to go next</h2>
         """,
         unsafe_allow_html=True,
     )
@@ -1664,15 +1664,15 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
         """
         <div class="method-grid">
           <section class="home-card">
-            <h2><i class="mark chart"></i>Delivery Performance</h2>
+            <h2>Delivery Performance</h2>
             <p>The audit of the promised day. It answers whether the miss is regional or nationwide, and how the review score sits next to a late arrival.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark clock"></i>Dashboard</h2>
+            <h2>Dashboard</h2>
             <p>Sales, customers, payments, and the same late-day rule, narrowed by region, year, and whether the package was on time.</p>
           </section>
           <section class="home-card">
-            <h2><i class="mark trend"></i>Prediction</h2>
+            <h2>Prediction</h2>
             <p>A check on orders placed in 2018. It uses only the region and the promised lead time, both known on the day the customer orders.</p>
           </section>
         </div>
@@ -1685,7 +1685,7 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
     open_predict.button("Open Prediction", key="go_predict", width="stretch", on_click=choose_section, args=("predict",))
     st.markdown(
         """
-        <h2 class="section-label"><i class="mark file"></i>Outputs</h2>
+        <h2 class="section-label">Outputs</h2>
         <div class="method-grid">
           <section class="home-card">
             <h2>Notebook</h2>
@@ -1709,7 +1709,7 @@ def render_overview(summaries: dict, commerce: dict | None) -> None:
 def render_delivery(summaries: dict, commerce: dict | None) -> None:
     st.markdown(
         """
-        <h1 class="page-title"><i class="mark box"></i>Delivery Performance</h1>
+        <h1 class="page-title">Delivery Performance</h1>
         <p class="page-sub">Veridi Logistics Delivery Performance Audit. The promised day, the regions, and the review score.</p>
         """,
         unsafe_allow_html=True,
@@ -1723,7 +1723,7 @@ def render_delivery(summaries: dict, commerce: dict | None) -> None:
 
 
 def render_prediction(risk: dict) -> None:
-    st.markdown('<h1 class="page-title"><i class="mark trend"></i>Prediction</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="page-title">Prediction</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-sub">Will this order miss its date? The check uses only the region and the promised lead time, both known when the customer orders.</p>',
         unsafe_allow_html=True,
@@ -1735,15 +1735,15 @@ def render_prediction(risk: dict) -> None:
         ("alert", "Late rate in the riskiest tenth", pct(risk["precision"]), f"{risk['lift']:.1f} times the overall late rate"),
     ]
     cards = "".join(
-        f'<div class="kpi"><i class="mark {mark}"></i><span>{escape(label)}</span><b>{escape(value)}</b><i>{escape(note)}</i></div>'
-        for mark, label, value, note in kpis
+        f'<div class="kpi"><span>{escape(label)}</span><b>{escape(value)}</b><i>{escape(note)}</i></div>'
+        for _mark, label, value, note in kpis
     )
     st.markdown(f'<div class="kpis">{cards}</div>', unsafe_allow_html=True)
 
     deciles = risk.get("deciles")
     if deciles is not None and len(deciles):
         st.markdown(
-            '<h2 class="section-label"><i class="mark trend"></i>Does a higher score mean a later miss?</h2>',
+            '<h2 class="section-label">Does a higher score mean a later miss?</h2>',
             unsafe_allow_html=True,
         )
         with st.container(border=True):
@@ -1816,11 +1816,11 @@ def render_prediction(risk: dict) -> None:
         f"""
         <div class="recommend-grid">
           <section class="home-card">
-            <h2><i class="mark target"></i>What we are predicting</h2>
+            <h2>What we are predicting</h2>
             <p>Logistic regression estimates the chance that a delivered order misses the promised day. The only inputs are the customer’s region and the number of days Veridi promised, both known when the order is placed. It does not forecast sales. Seller handling time and the carrier’s road time are unknown that day, so they are not used. Orders placed before 2018 teach the pattern. January through August 2018 is the check, and those orders were not used to fit it.</p>
           </section>
           <section class="home-card finding">
-            <h2><i class="mark flag"></i>The outcome</h2>
+            <h2>The outcome</h2>
             <p>On the 2018 check, {pct(risk["test_late_rate"])} of deliveries were late. The riskiest tenth were late {pct(risk["precision"])} of the time, {risk["lift"]:.1f} times the overall rate, and that tenth caught {pct(risk["recall"])} of the late orders. The score separates late from on time only slightly better than remembering each region’s old late rate ({risk["auc"]:.2f} versus {risk["baseline_auc"]:.2f}). At the same promised window, a Northeast order is {northeast_odds:.1f} times as likely to be late as a Southeast order.</p>
           </section>
         </div>
