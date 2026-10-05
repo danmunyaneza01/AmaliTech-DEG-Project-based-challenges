@@ -15,7 +15,15 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from data_loader import load_commerce, load_late_risk, load_state_centers, load_summaries
+from data_loader import (
+    dashboard_slice,
+    load_commerce,
+    load_dashboard_public,
+    load_late_risk,
+    load_state_centers,
+    load_summaries,
+    thaw_dashboard_slice,
+)
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT_DIR = ROOT / "outputs"
@@ -1107,20 +1115,6 @@ def render_actions(summaries: dict) -> None:
     )
 
 
-def slice_orders(frame: pd.DataFrame, region: str, year: str, delivery: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-    scoped = frame
-    if region != "All regions":
-        scoped = scoped.loc[scoped["region"] == region]
-    if year != "All years":
-        scoped = scoped.loc[scoped["year"] == int(year)]
-    view = scoped
-    if delivery == "On time":
-        view = view.loc[view["is_late"] == False]
-    elif delivery == "Late":
-        view = view.loc[view["is_late"] == True]
-    return view, scoped
-
-
 def money(value: float) -> str:
     if abs(value) >= 1_000_000:
         return f"R$ {value / 1e6:.1f}M"
@@ -1129,7 +1123,7 @@ def money(value: float) -> str:
     return f"R$ {value:.0f}"
 
 
-def render_dashboard(commerce: dict, summaries: dict) -> None:
+def render_dashboard(commerce: dict | None, summaries: dict) -> None:
     st.markdown('<h1 class="page-title"><i class="mark chart"></i>Dashboard</h1>', unsafe_allow_html=True)
     with st.container(border=True, key="dash_panel"):
         brief_slot = st.empty()
@@ -1149,35 +1143,32 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
                 '<p class="audit-note">Sales, reviews, and payments follow all three filters. Late-rate charts use region and year only, so choosing Late does not turn every rate into 100%.</p>',
                 unsafe_allow_html=True,
             )
-        view, scoped = slice_orders(commerce["frame"], dash_region, dash_year, dash_delivery)
-        if view.empty:
+        if commerce is None:
+            try:
+                raw = load_dashboard_public(OUTPUT_DIR)[f"{dash_region}|{dash_year}|{dash_delivery}"]
+            except (FileNotFoundError, KeyError):
+                brief_slot.info("The dashboard summary is not in this copy of the project.")
+                return
+            pack = thaw_dashboard_slice(raw)
+        else:
+            pack = dashboard_slice(
+                commerce["frame"], commerce["item_rows"], commerce["payment_rows"],
+                dash_region, dash_year, dash_delivery,
+            )
+        if pack.get("empty"):
             brief_slot.info("No orders match these filters.")
             return
-    reviewed = view.loc[view["review_score"].notna()]
-    scope_delivered = scoped.loc[scoped["is_late"].notna()]
-    scope_late = float(scope_delivered["is_late"].mean()) if not scope_delivered.empty else float("nan")
-    on_time_score = float(view.loc[view["is_late"] == False, "review_score"].mean())
-    late_score = float(view.loc[view["is_late"] == True, "review_score"].mean())
-    repeat_customers = view.groupby("customer_unique_id").size()
-    repeat_rate = float((repeat_customers > 1).mean()) if not repeat_customers.empty else float("nan")
-    avg_delivery = float(view["actual_days"].mean()) if view["actual_days"].notna().any() else float("nan")
-    avg_review = float(reviewed["review_score"].mean()) if not reviewed.empty else float("nan")
-    revenue = float(view["price"].sum())
-
-    regions = (
-        view.groupby("region", as_index=False)
-        .agg(revenue=("price", "sum"), orders=("order_id", "nunique"))
-        .merge(
-            scope_delivered.groupby("region", as_index=False).agg(
-                delivered=("order_id", "size"),
-                late_rate=("is_late", "mean"),
-            ),
-            on="region",
-            how="outer",
-        )
-    )
-    regions = regions.loc[regions["region"].isin(REGION_COLORS)].copy()
-    regions["revenue"] = regions["revenue"].fillna(0.0)
+    regions = pack["regions"]
+    scope_late = pack["scope_late"]
+    on_time_score = pack["on_time_score"]
+    late_score = pack["late_score"]
+    repeat_rate = pack["repeat_rate"]
+    avg_delivery = pack["avg_delivery"]
+    avg_review = pack["avg_review"]
+    revenue = pack["revenue"]
+    orders = pack["orders"]
+    customers = pack["customers"]
+    aov = pack["aov"]
     score_bits = []
     if on_time_score == on_time_score:
         score_bits.append(f"On-time orders score {on_time_score:.2f}")
@@ -1204,7 +1195,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
         f"""
         <div class="dash-brief">
           <h2><i class="mark flag"></i>Dashboard brief</h2>
-          <p>This selection is {money(revenue)} in product sales across {view['order_id'].nunique():,} orders. {score_line}{late_line} {place_line} A later promised day belongs where the miss is concentrated, not on every order in the selection.</p>
+          <p>This selection is {money(revenue)} in product sales across {orders:,} orders. {score_line}{late_line} {place_line} A later promised day belongs where the miss is concentrated, not on every order in the selection.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1212,9 +1203,9 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
 
     kpis = [
         ("chart", "tone-navy", "Total revenue", money(revenue), "Product sales, excludes freight"),
-        ("box", "tone-blue", "Orders", f"{view['order_id'].nunique():,}", "Orders in this selection"),
-        ("users", "tone-orange", "Unique customers", f"{view['customer_unique_id'].nunique():,}", "Distinct customers in this selection"),
-        ("file", "tone-rust", "Avg order value", f"R$ {view['price'].mean():.0f}", "Product sales per order"),
+        ("box", "tone-blue", "Orders", f"{orders:,}", "Orders in this selection"),
+        ("users", "tone-orange", "Unique customers", f"{customers:,}", "Distinct customers in this selection"),
+        ("file", "tone-rust", "Avg order value", f"R$ {aov:.0f}", "Product sales per order"),
         ("star", "tone-green", "Avg review score", f"{avg_review:.2f}" if avg_review == avg_review else "—", "Orders with a review, out of 5"),
         ("clock", "tone-amber", "Avg delivery time", f"{avg_delivery:.1f} days" if avg_delivery == avg_delivery else "—", "Purchase to delivery"),
         ("alert", "tone-red", "Late deliveries", pct(scope_late) if scope_late == scope_late else "—", "Region and year only, arrived packages"),
@@ -1265,13 +1256,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
                 show(fig)
     with st.container(border=True):
         card_heading("Eight largest states", "Late rate on arrived packages. The label is the rate and the number of deliveries. Red is worse than this region and year.")
-        states = (
-            scope_delivered.groupby("customer_state", as_index=False)
-            .agg(delivered=("order_id", "size"), late_rate=("is_late", "mean"))
-            .sort_values("delivered", ascending=False)
-            .head(8)
-            .sort_values("delivered", ascending=True)
-        )
+        states = pack["states"]
         if states.empty:
             st.info("No arrived packages in this region and year.")
         else:
@@ -1295,10 +1280,10 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
     with left:
         with st.container(border=True):
             card_heading("Sales on a kept day and a missed day", "Product sales in this selection. No arrival means the package has no delivery date, so it is not called late.")
+            promise_colors = {"On time": OK, "Late": DANGER, "No arrival": MUTED}
             promise_rows = [
-                ("On time", float(view.loc[view["is_late"] == False, "price"].sum()), int((view["is_late"] == False).sum()), OK),
-                ("Late", float(view.loc[view["is_late"] == True, "price"].sum()), int((view["is_late"] == True).sum()), DANGER),
-                ("No arrival", float(view.loc[view["is_late"].isna(), "price"].sum()), int(view["is_late"].isna().sum()), MUTED),
+                (row["name"], float(row["value"]), int(row["count"]), promise_colors[row["name"]])
+                for row in pack["promise"]
             ]
             fig = go.Figure(go.Bar(
                 x=[name for name, _, _, _ in promise_rows],
@@ -1314,11 +1299,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
     with right:
         with st.container(border=True):
             card_heading("Sales and orders by year", "Product sales in this selection. The label is sales and the order count.")
-            by_year = (
-                view.groupby("year", as_index=False)
-                .agg(orders=("order_id", "nunique"), revenue=("price", "sum"))
-                .sort_values("year")
-            )
+            by_year = pack["by_year"]
             fig = go.Figure(go.Bar(
                 x=by_year["year"].astype(str),
                 y=by_year["revenue"] / 1000,
@@ -1334,12 +1315,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
     with left:
         with st.container(border=True):
             card_heading("Average trip length by region", "Days from purchase to arrival, for packages that arrived in this region and year.")
-            trip = (
-                scope_delivered.groupby("region", as_index=False)
-                .agg(days=("actual_days", "mean"), delivered=("order_id", "size"))
-                .dropna(subset=["days"])
-                .sort_values("days", ascending=False)
-            )
+            trip = pack["trip"]
             if trip.empty:
                 st.info("No arrival dates in this region and year.")
             else:
@@ -1358,12 +1334,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
     with right:
         with st.container(border=True):
             card_heading("Average stars by region", "Orders with a review in this region and year.")
-            star_region = (
-                scoped.loc[scoped["review_score"].notna()]
-                .groupby("region", as_index=False)
-                .agg(score=("review_score", "mean"), reviews=("order_id", "size"))
-                .sort_values("score", ascending=True)
-            )
+            star_region = pack["star_region"]
             if star_region.empty:
                 st.info("No reviews in this region and year.")
             else:
@@ -1381,17 +1352,11 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
                 show(fig)
     with st.container(border=True):
         card_heading("Weak reviews by region", "Share of reviews scored 1 or 2 in this region and year. The dashed line is that selection.")
-        scored = scoped.loc[scoped["review_score"].notna()].copy()
-        if scored.empty:
+        weak = pack["weak"]
+        weak_line = pack["weak_line"]
+        if weak.empty:
             st.info("No reviews in this region and year.")
         else:
-            scored["weak"] = scored["review_score"] <= 2
-            weak = (
-                scored.groupby("region", as_index=False)
-                .agg(weak_rate=("weak", "mean"), reviews=("order_id", "size"))
-                .sort_values("weak_rate", ascending=False)
-            )
-            weak_line = float(scored["weak"].mean())
             fig = go.Figure(go.Bar(
                 x=weak["region"],
                 y=weak["weak_rate"],
@@ -1411,13 +1376,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
             show(fig)
 
     st.markdown('<h2 class="section-label"><i class="mark trend"></i>Whether the miss landed in a busy month</h2>', unsafe_allow_html=True)
-    monthly = (
-        view.groupby("month", as_index=False)
-        .agg(orders=("order_id", "nunique"), revenue=("price", "sum"))
-        .sort_values("month")
-    )
-    if dash_year == "All years":
-        monthly = monthly.loc[monthly["month"].between("2017-01", "2018-08")]
+    monthly = pack["monthly"]
     with st.container(border=True):
         card_heading(
             "Sales by month",
@@ -1440,13 +1399,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
             show(fig)
     with st.container(border=True):
         card_heading("Late deliveries and weak reviews by month", "Region and year only. A weak review scores 1 or 2. The peak of each line is labeled.")
-        month_base = scope_delivered.groupby("month", as_index=False)["is_late"].mean()
-        month_neg = scoped.loc[scoped["review_score"].notna()].copy()
-        month_neg["is_negative"] = month_neg["review_score"] <= 2
-        month_neg = month_neg.groupby("month", as_index=False)["is_negative"].mean()
-        trend = month_base.merge(month_neg, on="month", how="inner").sort_values("month")
-        if dash_year == "All years":
-            trend = trend.loc[trend["month"].between("2017-01", "2018-08")]
+        trend = pack["trend"]
         if trend.empty:
             st.info("Not enough months in this region and year.")
         else:
@@ -1462,15 +1415,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
     with left:
         with st.container(border=True):
             card_heading("Largest categories by sales", "Item sales in this selection. An order with several products can appear in more than one category.")
-            item_rows = commerce["item_rows"]
-            cats = (
-                item_rows.loc[item_rows["order_id"].isin(view["order_id"])]
-                .groupby("category", as_index=False)["price"]
-                .sum()
-                .sort_values("price", ascending=False)
-                .head(8)
-                .sort_values("price", ascending=True)
-            )
+            cats = pack["cats"]
             if cats.empty:
                 st.info("No item sales in this selection.")
             else:
@@ -1489,15 +1434,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
     with right:
         with st.container(border=True):
             card_heading("Categories that miss the date most often", "Most expensive item on the order. At least 100 arrived orders in this region and year. The dashed line is that selection.")
-            typed = scoped.loc[scoped["is_late"].notna() & scoped["category"].notna()]
-            focus = (
-                typed.groupby("category", as_index=False)
-                .agg(delivered_orders=("order_id", "size"), late_rate=("is_late", "mean"), avg_review_score=("review_score", "mean"))
-                .loc[lambda rows: rows["delivered_orders"] >= 100]
-                .sort_values("late_rate", ascending=False)
-                .head(8)
-                .sort_values("late_rate", ascending=True)
-            )
+            focus = pack["focus"]
             if focus.empty:
                 st.info("Not enough arrived orders in this region and year to compare product types.")
             else:
@@ -1523,10 +1460,7 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
     with left:
         with st.container(border=True):
             card_heading("Review scores", "Orders with a review in this selection. A score between two stars is rounded.")
-            dist = (
-                reviewed["review_score"].round().clip(1, 5).value_counts().sort_index()
-                .rename_axis("score").reset_index(name="reviews")
-            ) if not reviewed.empty else pd.DataFrame(columns=["score", "reviews"])
+            dist = pack["dist"]
             if dist.empty:
                 st.info("No reviews in this selection.")
             else:
@@ -1565,19 +1499,8 @@ def render_dashboard(commerce: dict, summaries: dict) -> None:
             show(fig)
 
     st.markdown('<h2 class="section-label"><i class="mark file"></i>How the order was paid</h2>', unsafe_allow_html=True)
-    pay_rows = commerce["payment_rows"]
-    pays = (
-        pay_rows.loc[pay_rows["order_id"].isin(view["order_id"]), "payment_type"]
-        .value_counts()
-        .rename_axis("payment_type")
-        .reset_index(name="records")
-    )
-    pay_late = pay_rows.merge(scope_delivered[["order_id", "is_late"]], on="order_id", how="inner")
-    pay_rate = (
-        pay_late.groupby("payment_type", as_index=False)
-        .agg(records=("order_id", "size"), late_rate=("is_late", "mean"))
-        .sort_values("records", ascending=False)
-    )
+    pays = pack["pays"]
+    pay_rate = pack["pay_rate"]
     left, right = st.columns(2)
     with left:
         with st.container(border=True):
@@ -1902,14 +1825,7 @@ def main() -> None:
         commerce = None
 
     if page == "dashboard":
-        if commerce is None:
-            st.markdown(
-                '<p class="page-sub">The order-level table is kept out of the public repository. These charts use the summary tables.</p>',
-                unsafe_allow_html=True,
-            )
-            render_delivery(summaries, None)
-        else:
-            render_dashboard(commerce, summaries)
+        render_dashboard(commerce, summaries)
     elif page == "predict":
         try:
             render_prediction(late_risk_cached())

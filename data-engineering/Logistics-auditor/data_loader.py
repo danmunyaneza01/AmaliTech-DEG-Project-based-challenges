@@ -288,6 +288,270 @@ REGION = {
     "PA": "North", "AM": "North", "RO": "North", "AC": "North", "RR": "North", "AP": "North", "TO": "North",
 }
 REGION_ORDER = ["Southeast", "South", "Central-West", "Northeast", "North"]
+DASHBOARD_REGIONS = ["All regions", *REGION_ORDER]
+DASHBOARD_YEARS = ["All years", "2016", "2017", "2018"]
+DASHBOARD_DELIVERIES = ["All orders", "On time", "Late"]
+
+
+def _clean_number(value):
+    if isinstance(value, str):
+        return value
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    if hasattr(value, "item") and not isinstance(value, (bytes, str)):
+        try:
+            value = value.item()
+        except (ValueError, AttributeError):
+            pass
+    try:
+        if pd.isna(value):
+            return None
+    except TypeError:
+        return value
+    if isinstance(value, int):
+        return int(value)
+    if isinstance(value, float):
+        if value != value or value in (float("inf"), float("-inf")):
+            return None
+        return float(value)
+    return value
+
+
+def _records(frame: pd.DataFrame) -> list[dict]:
+    if frame is None or frame.empty:
+        return []
+    rows = frame.to_dict(orient="records")
+    return [{key: _clean_number(value) if not isinstance(value, str) else value for key, value in row.items()} for row in rows]
+
+
+def dashboard_slice(frame: pd.DataFrame, item_rows: pd.DataFrame, payment_rows: pd.DataFrame, region: str, year: str, delivery: str) -> dict:
+    """One dashboard selection, as totals and small tables. No order rows."""
+    scoped = frame
+    if region != "All regions":
+        scoped = scoped.loc[scoped["region"] == region]
+    if year != "All years":
+        scoped = scoped.loc[scoped["year"] == int(year)]
+    view = scoped
+    if delivery == "On time":
+        view = view.loc[view["is_late"] == False]
+    elif delivery == "Late":
+        view = view.loc[view["is_late"] == True]
+    if view.empty:
+        return {"empty": True}
+
+    reviewed = view.loc[view["review_score"].notna()]
+    scope_delivered = scoped.loc[scoped["is_late"].notna()]
+    scope_late = float(scope_delivered["is_late"].mean()) if not scope_delivered.empty else float("nan")
+    on_time = view.loc[view["is_late"] == False, "review_score"]
+    late = view.loc[view["is_late"] == True, "review_score"]
+    on_time_score = float(on_time.mean()) if on_time.notna().any() else float("nan")
+    late_score = float(late.mean()) if late.notna().any() else float("nan")
+    repeat_customers = view.groupby("customer_unique_id").size()
+    repeat_rate = float((repeat_customers > 1).mean()) if not repeat_customers.empty else float("nan")
+    avg_delivery = float(view["actual_days"].mean()) if view["actual_days"].notna().any() else float("nan")
+    avg_review = float(reviewed["review_score"].mean()) if not reviewed.empty else float("nan")
+
+    regions = (
+        view.groupby("region", as_index=False)
+        .agg(revenue=("price", "sum"), orders=("order_id", "nunique"))
+        .merge(
+            scope_delivered.groupby("region", as_index=False).agg(
+                delivered=("order_id", "size"),
+                late_rate=("is_late", "mean"),
+            ),
+            on="region",
+            how="outer",
+        )
+    )
+    regions = regions.loc[regions["region"].isin(REGION_ORDER)].copy()
+    regions["revenue"] = regions["revenue"].fillna(0.0)
+
+    states = (
+        scope_delivered.groupby("customer_state", as_index=False)
+        .agg(delivered=("order_id", "size"), late_rate=("is_late", "mean"))
+        .sort_values("delivered", ascending=False)
+        .head(8)
+        .sort_values("delivered", ascending=True)
+    )
+    promise = [
+        {"name": "On time", "value": float(view.loc[view["is_late"] == False, "price"].sum()), "count": int((view["is_late"] == False).sum())},
+        {"name": "Late", "value": float(view.loc[view["is_late"] == True, "price"].sum()), "count": int((view["is_late"] == True).sum())},
+        {"name": "No arrival", "value": float(view.loc[view["is_late"].isna(), "price"].sum()), "count": int(view["is_late"].isna().sum())},
+    ]
+    by_year = (
+        view.groupby("year", as_index=False)
+        .agg(orders=("order_id", "nunique"), revenue=("price", "sum"))
+        .sort_values("year")
+    )
+    trip = (
+        scope_delivered.groupby("region", as_index=False)
+        .agg(days=("actual_days", "mean"), delivered=("order_id", "size"))
+        .dropna(subset=["days"])
+        .sort_values("days", ascending=False)
+    )
+    star_region = (
+        scoped.loc[scoped["review_score"].notna()]
+        .groupby("region", as_index=False)
+        .agg(score=("review_score", "mean"), reviews=("order_id", "size"))
+        .sort_values("score", ascending=True)
+    )
+    scored = scoped.loc[scoped["review_score"].notna()].copy()
+    if scored.empty:
+        weak = scored
+        weak_line = float("nan")
+    else:
+        scored["weak"] = scored["review_score"] <= 2
+        weak = (
+            scored.groupby("region", as_index=False)
+            .agg(weak_rate=("weak", "mean"), reviews=("order_id", "size"))
+            .sort_values("weak_rate", ascending=False)
+        )
+        weak_line = float(scored["weak"].mean())
+    monthly = (
+        view.groupby("month", as_index=False)
+        .agg(orders=("order_id", "nunique"), revenue=("price", "sum"))
+        .sort_values("month")
+    )
+    if year == "All years":
+        monthly = monthly.loc[monthly["month"].between(MONTH_START, MONTH_END)]
+    month_base = scope_delivered.groupby("month", as_index=False)["is_late"].mean()
+    month_neg = scoped.loc[scoped["review_score"].notna()].copy()
+    if month_neg.empty:
+        trend = month_neg
+    else:
+        month_neg["is_negative"] = month_neg["review_score"] <= 2
+        month_neg = month_neg.groupby("month", as_index=False)["is_negative"].mean()
+        trend = month_base.merge(month_neg, on="month", how="inner").sort_values("month")
+        if year == "All years":
+            trend = trend.loc[trend["month"].between(MONTH_START, MONTH_END)]
+    cats = (
+        item_rows.loc[item_rows["order_id"].isin(view["order_id"])]
+        .groupby("category", as_index=False)["price"]
+        .sum()
+        .sort_values("price", ascending=False)
+        .head(8)
+        .sort_values("price", ascending=True)
+    )
+    typed = scoped.loc[scoped["is_late"].notna() & scoped["category"].notna()]
+    focus = (
+        typed.groupby("category", as_index=False)
+        .agg(delivered_orders=("order_id", "size"), late_rate=("is_late", "mean"), avg_review_score=("review_score", "mean"))
+        .loc[lambda rows: rows["delivered_orders"] >= 100]
+        .sort_values("late_rate", ascending=False)
+        .head(8)
+        .sort_values("late_rate", ascending=True)
+    )
+    if reviewed.empty:
+        dist = pd.DataFrame(columns=["score", "reviews"])
+    else:
+        dist = (
+            reviewed["review_score"].round().clip(1, 5).value_counts().sort_index()
+            .rename_axis("score").reset_index(name="reviews")
+        )
+    pays = (
+        payment_rows.loc[payment_rows["order_id"].isin(view["order_id"]), "payment_type"]
+        .value_counts()
+        .rename_axis("payment_type")
+        .reset_index(name="records")
+    )
+    pay_late = payment_rows.merge(scope_delivered[["order_id", "is_late"]], on="order_id", how="inner")
+    pay_rate = (
+        pay_late.groupby("payment_type", as_index=False)
+        .agg(records=("order_id", "size"), late_rate=("is_late", "mean"))
+        .sort_values("records", ascending=False)
+    )
+    return {
+        "empty": False,
+        "revenue": float(view["price"].sum()),
+        "orders": int(view["order_id"].nunique()),
+        "customers": int(view["customer_unique_id"].nunique()),
+        "aov": float(view["price"].mean()),
+        "avg_review": avg_review,
+        "avg_delivery": avg_delivery,
+        "scope_late": scope_late,
+        "repeat_rate": repeat_rate,
+        "on_time_score": on_time_score,
+        "late_score": late_score,
+        "regions": regions,
+        "states": states,
+        "promise": promise,
+        "by_year": by_year,
+        "trip": trip,
+        "star_region": star_region,
+        "weak_line": weak_line,
+        "weak": weak,
+        "monthly": monthly,
+        "trend": trend,
+        "cats": cats,
+        "focus": focus,
+        "dist": dist,
+        "pays": pays,
+        "pay_rate": pay_rate,
+    }
+
+
+def _freeze_slice(pack: dict) -> dict:
+    frozen = {"empty": True} if pack.get("empty") else {"empty": False}
+    if pack.get("empty"):
+        return frozen
+    for key, value in pack.items():
+        if key == "empty":
+            continue
+        if isinstance(value, pd.DataFrame):
+            frozen[key] = _records(value)
+        elif isinstance(value, list):
+            frozen[key] = _records(pd.DataFrame(value)) if value and isinstance(value[0], dict) else value
+        else:
+            frozen[key] = _clean_number(value)
+    return frozen
+
+
+def _thaw_number(value):
+    if value is None:
+        return float("nan")
+    return value
+
+
+def thaw_dashboard_slice(raw: dict) -> dict:
+    if raw.get("empty"):
+        return {"empty": True}
+    frames = {
+        "regions", "states", "by_year", "trip", "star_region", "weak",
+        "monthly", "trend", "cats", "focus", "dist", "pays", "pay_rate",
+    }
+    pack = {"empty": False, "promise": raw.get("promise") or []}
+    for key, value in raw.items():
+        if key in {"empty", "promise"}:
+            continue
+        if key in frames:
+            pack[key] = pd.DataFrame(value or [])
+        else:
+            pack[key] = _thaw_number(value)
+    return pack
+
+
+def save_dashboard_public(commerce: dict, output_dir: Path) -> Path:
+    """Write every filter combination as totals, without an order row."""
+    slices = {}
+    for region in DASHBOARD_REGIONS:
+        for year in DASHBOARD_YEARS:
+            for delivery in DASHBOARD_DELIVERIES:
+                key = f"{region}|{year}|{delivery}"
+                slices[key] = _freeze_slice(dashboard_slice(
+                    commerce["frame"], commerce["item_rows"], commerce["payment_rows"], region, year, delivery,
+                ))
+    path = output_dir / "dashboard_public.json"
+    path.write_text(json.dumps({"slices": slices}, ensure_ascii=True), encoding="utf-8")
+    return path
+
+
+def load_dashboard_public(output_dir: Path) -> dict:
+    path = output_dir / "dashboard_public.json"
+    if not path.exists():
+        raise FileNotFoundError("Missing dashboard summary: dashboard_public.json")
+    return json.loads(path.read_text(encoding="utf-8"))["slices"]
 
 
 def load_late_risk(data_dir: Path, output_dir: Path | None = None) -> dict:
