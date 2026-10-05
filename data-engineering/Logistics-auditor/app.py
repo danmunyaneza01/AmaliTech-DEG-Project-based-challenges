@@ -6,6 +6,7 @@ From this folder: streamlit run app.py
 
 import base64
 import io
+import json
 import math
 import zipfile
 from html import escape
@@ -15,15 +16,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from data_loader import (
-    dashboard_slice,
-    load_commerce,
-    load_dashboard_public,
-    load_late_risk,
-    load_state_centers,
-    load_summaries,
-    thaw_dashboard_slice,
-)
+from data_loader import load_commerce, load_late_risk, load_state_centers, load_summaries
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT_DIR = ROOT / "outputs"
@@ -1115,6 +1108,37 @@ def render_actions(summaries: dict) -> None:
     )
 
 
+def _thaw_number(value):
+    if value is None:
+        return float("nan")
+    return value
+
+
+def thaw_dashboard_slice(raw: dict) -> dict:
+    if raw.get("empty"):
+        return {"empty": True}
+    frames = {
+        "regions", "states", "by_year", "trip", "star_region", "weak",
+        "monthly", "trend", "cats", "focus", "dist", "pays", "pay_rate",
+    }
+    pack = {"empty": False, "promise": raw.get("promise") or []}
+    for key, value in raw.items():
+        if key in {"empty", "promise"}:
+            continue
+        if key in frames:
+            pack[key] = pd.DataFrame(value or [])
+        else:
+            pack[key] = _thaw_number(value)
+    return pack
+
+
+def load_dashboard_public(output_dir: Path) -> dict:
+    path = output_dir / "dashboard_public.json"
+    if not path.exists():
+        raise FileNotFoundError("Missing dashboard summary: dashboard_public.json")
+    return json.loads(path.read_text(encoding="utf-8"))["slices"]
+
+
 def money(value: float) -> str:
     if abs(value) >= 1_000_000:
         return f"R$ {value / 1e6:.1f}M"
@@ -1151,6 +1175,7 @@ def render_dashboard(commerce: dict | None, summaries: dict) -> None:
                 return
             pack = thaw_dashboard_slice(raw)
         else:
+            from data_loader import dashboard_slice
             pack = dashboard_slice(
                 commerce["frame"], commerce["item_rows"], commerce["payment_rows"],
                 dash_region, dash_year, dash_delivery,
